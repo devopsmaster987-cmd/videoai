@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freeanimate-ai"
+version = "1.0.0"
+description = "FreeAnimate AI — free, multilingual, terminal-based AI animation and YouTube video creator"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "FreeAnimate AI contributors" }]
+keywords = ["video", "animation", "ffmpeg", "tts", "subtitles", "youtube"]
+dependencies = [
+    "Pillow>=10.0",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+windows-tts = ["pyttsx3>=2.90"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+freeanimate = "freeanimate.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["freeanimate*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

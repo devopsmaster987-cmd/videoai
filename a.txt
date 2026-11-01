@@ -1,0 +1,1319 @@
+# MASTER PROMPT: FREEANIMATE AI
+## A Free, Multilingual, Terminal-Based AI Animation and YouTube Video Creator
+
+**Role:** Act as a senior Python engineer, AI video-generation engineer, multimedia developer, software architect, testing engineer, and Windows compatibility specialist.
+
+**Mission:** Build FreeAnimate AI, a genuinely working application that converts a user's text prompt into a complete animated video using available free resources.
+
+The application must prioritize practical functionality, zero mandatory cost, low hardware requirements, multilingual support, reliable video production, and honest reporting.
+
+**Do not build a mockup. Do not stop after creating a plan. Inspect the existing repository, implement the software, run its tests, fix errors, and demonstrate a real end-to-end video-generation workflow.**
+
+---
+
+# 1. PROJECT OVERVIEW
+
+Build an application named **FreeAnimate AI**.
+
+It should allow a user to enter a prompt such as:
+
+"Create a cinematic documentary explaining the history of the universe, from the Big Bang to the formation of galaxies. Use engaging narration, consistent visuals, animated scenes, subtitles, and suitable background music."
+
+The application should automatically:
+
+1. Understand the user's prompt.
+2. Generate or prepare a script.
+3. Support the selected language.
+4. Organize the script into scenes.
+5. Estimate the duration of each scene.
+6. Create visual descriptions.
+7. Generate images or video clips when compatible free tools are available.
+8. Animate still illustrations when AI video generation is unavailable.
+9. Generate narration through an available free text-to-speech engine.
+10. Generate subtitles synchronized to narration.
+11. Add appropriately licensed music and sound effects when available.
+12. Assemble the scenes into a complete video.
+13. Export in the selected resolution.
+14. Validate the resulting video.
+15. Save project information so interrupted work can resume.
+
+The application must work through a terminal and be designed for a Windows laptop with limited CPU, RAM, storage, and potentially no dedicated GPU.
+
+## Most important architectural requirement
+
+**FreeAnimate AI must remain functional without a paid API, a powerful GPU, a large local AI model, or an available cloud GPU.**
+
+Its core fallback must create real videos using meaningful visuals, animated illustrations, camera movements, transitions, narration, subtitles, and FFmpeg.
+
+AI-generated video footage is an optional capability, not a requirement for the basic application to work.
+
+---
+
+# 2. NON-NEGOTIABLE PRINCIPLES
+
+## 2.1 Free operation
+
+Do not require:
+
+- Paid AI API keys.
+- Paid subscriptions.
+- Paid cloud GPUs.
+- Paid video-generation services.
+- Paid stock footage.
+- Mandatory credit-card registration.
+- Hidden usage-based billing.
+
+Use free and open-source software and legitimately available free services.
+
+If an optional service has usage limits, queues, account requirements, or restrictions, disclose them before the user chooses it.
+
+Never silently switch to a paid provider.
+
+Never assume that a free service provides unlimited use.
+
+## 2.2 Honest capabilities
+
+Do not claim that unlimited, high-quality, fully AI-generated video is possible for free on a low-powered laptop.
+
+Clearly distinguish between:
+
+- AI-generated video footage.
+- AI-generated images.
+- Animated illustrations.
+- Procedural motion graphics.
+- User-provided assets.
+- Appropriately licensed stock footage.
+- Conventional video editing and assembly.
+
+Report which methods were actually used.
+
+Never label an animated still image as AI-generated video footage.
+
+Never claim that a video was created successfully unless the output exists and has been validated.
+
+## 2.3 No fake functionality
+
+Do not create:
+
+- Fake progress bars.
+- Fake generation results.
+- Placeholder videos presented as completed projects.
+- Fabricated provider availability.
+- Fabricated benchmark results.
+- Fake test results.
+- Success messages when operations fail.
+
+Every reported operation must correspond to real work.
+
+## 2.4 Safe resource usage
+
+Do not bypass provider quotas, access restrictions, or usage limits.
+
+Do not use account rotation to evade restrictions.
+
+Do not silently upload private scripts or assets to external services.
+
+Only use software, models, services, and assets in accordance with their licenses and terms.
+
+---
+
+# 3. REQUIRED VIDEO DURATION OPTIONS
+
+Provide these exact duration choices in the interactive terminal interface.
+
+| Option | Target duration |
+|---|---:|
+| 1 | 5 minutes |
+| 2 | 10 minutes |
+| 3 | 15 minutes |
+| 4 | 20 minutes |
+| 5 | 25 minutes |
+| 6 | 30 minutes |
+| 7 | 40 minutes |
+| 8 | 45 minutes |
+| 9 | Custom duration |
+
+The user must be able to select a duration by number or enter a supported custom duration.
+
+Example:
+
+FREEANIMATE AI — CREATE VIDEO
+
+Enter your video prompt:
+> Explain the history of ancient Egypt.
+
+Choose video duration:
+
+[1] 5 minutes  
+[2] 10 minutes  
+[3] 15 minutes  
+[4] 20 minutes  
+[5] 25 minutes  
+[6] 30 minutes  
+[7] 40 minutes  
+[8] 45 minutes  
+[9] Custom duration
+
+The selected duration must affect:
+
+- Script length.
+- Narration length.
+- Number of scenes.
+- Scene durations.
+- Subtitle timing.
+- Video timeline.
+- Rendering estimates.
+
+Do not generate a short video and stretch it to 45 minutes.
+
+Long videos must contain an appropriate amount of meaningful content.
+
+Do not add excessive silence or repeat scenes merely to meet the duration requirement.
+
+Calculate the final duration and report the actual result.
+
+Support a configurable duration tolerance and warn the user if the completed video falls outside it.
+
+---
+
+# 4. MULTILINGUAL VIDEO CREATION
+
+Multilingual support is a core feature, not an optional afterthought.
+
+The user must be able to select the language of the video before generation begins.
+
+## 4.1 Language-selection menu
+
+Provide an interactive terminal menu containing at least the following options:
+
+[1] English  
+[2] Urdu — اردو  
+[3] Hindi — हिन्दी  
+[4] Arabic — العربية  
+[5] Spanish — Español  
+[6] French — Français  
+[7] German — Deutsch  
+[8] Portuguese — Português  
+[9] Chinese — 中文  
+[10] Japanese — 日本語  
+[11] Korean — 한국어  
+[12] Turkish — Türkçe  
+[13] Russian — Русский  
+[14] Bengali — বাংলা  
+[15] Punjabi — ਪੰਜਾਬੀ / پنجابی  
+[16] Italian — Italiano  
+[17] Indonesian — Bahasa Indonesia  
+[18] Other supported language  
+[19] Enter a custom language
+
+Allow selection by number or language name.
+
+The language list must be configurable so that additional languages can be added without rewriting the core application.
+
+Do not claim that all languages are supported by every generation engine.
+
+Check the actual capabilities of the selected text, translation, and TTS providers.
+
+## 4.2 Separate language settings
+
+Provide independent settings for:
+
+- Project language.
+- Script language.
+- Narration language.
+- Subtitle language.
+- On-screen text language.
+
+By default, all settings should use the selected project language.
+
+Allow users to override individual settings.
+
+Example:
+
+Project language: Urdu  
+Script language: Urdu  
+Narration language: Urdu  
+Subtitle language: English  
+On-screen text language: Urdu
+
+Another example:
+
+Project language: English  
+Script language: English  
+Narration language: Hindi  
+Subtitle language: English  
+On-screen text language: English
+
+When the selected languages differ, use a suitable translation workflow if one is genuinely available.
+
+Do not silently substitute English for the requested language.
+
+If translation is unavailable, explain the limitation and offer the user an alternative.
+
+## 4.3 Language consistency
+
+The selected language must be used consistently across:
+
+- Script.
+- Scene narration.
+- Voice-over.
+- Subtitles.
+- Chapter headings.
+- Intro and outro.
+- On-screen text.
+- Titles.
+- Optional thumbnail text.
+- YouTube title suggestions.
+- YouTube description suggestions.
+
+For factual videos, preserve important names, dates, numbers, technical terms, and meaning during translation.
+
+Do not fabricate facts or citations when adapting content into another language.
+
+## 4.4 Language-specific text rendering
+
+Use Unicode throughout the application.
+
+Support non-English text in:
+
+- Terminal input.
+- Configuration.
+- Project manifests.
+- Scripts.
+- Subtitles.
+- Filenames where appropriate.
+- Video overlays.
+
+For Urdu, Arabic, and other right-to-left scripts:
+
+- Support right-to-left text direction.
+- Apply appropriate text shaping.
+- Apply bidirectional text handling.
+- Use compatible fonts.
+- Preserve punctuation and mixed-language text.
+- Ensure that connected letters display correctly.
+- Verify subtitle alignment and reading order.
+
+For Chinese, Japanese, Korean, and other writing systems, select fonts containing the required characters.
+
+Do not assume a required font is installed.
+
+Provide font checks and clear installation guidance.
+
+Test actual rendered output rather than merely checking that a text file exists.
+
+---
+
+# 5. NARRATION AND VOICE SELECTION
+
+Implement a pluggable text-to-speech system.
+
+Prefer free, offline narration when a compatible voice is available.
+
+Investigate suitable lightweight engines, including compatible Piper distributions, and verify the current software and voice-model licensing.
+
+After the user selects the narration language, display only voices that are actually available.
+
+Example:
+
+Narration language: Urdu
+
+[1] Use an installed compatible Urdu voice  
+[2] Install a compatible free voice model  
+[3] Preview available voices  
+[4] Continue without narration  
+[5] Choose another language
+
+These are example actions, not claims that a particular Urdu voice is installed or available.
+
+For each available voice, show:
+
+- Voice name.
+- Supported language.
+- Voice characteristics when reliably documented.
+- Model size when known.
+- Whether the voice works offline.
+- Any relevant licensing restrictions.
+
+Allow a short voice preview where practical.
+
+Provide settings for:
+
+- Speaking speed.
+- Volume.
+- Pauses.
+- Pronunciation adjustments where supported.
+- Voice selection.
+- Narration chunk size.
+
+For long scripts, synthesize narration in manageable chunks and combine the results in the correct order.
+
+Cache completed narration and avoid regenerating unchanged sections.
+
+If the requested voice is unavailable, explain why and offer alternatives.
+
+Never require a paid TTS API.
+
+---
+
+# 6. SCRIPT AND STORY GENERATION
+
+Create a script engine that converts a user prompt into a structured script suitable for the requested duration and language.
+
+Support:
+
+- Educational documentaries.
+- Historical documentaries.
+- Science explainers.
+- Technology explainers.
+- Nature documentaries.
+- Storytelling.
+- Motivational stories.
+- Mystery and adventure stories.
+- Children's educational content, where appropriate.
+- General YouTube long-form videos.
+
+Optional script settings:
+
+- Target audience.
+- Language.
+- Tone.
+- Narrative style.
+- Educational or entertainment purpose.
+- Desired ending.
+- Characters.
+- Visual style.
+- Content restrictions.
+- Source requirements for factual topics.
+
+For factual documentaries, provide a way to record supporting sources and distinguish verified information from unverified claims.
+
+Do not invent citations or claim verification without actually checking the sources.
+
+## 6.1 Script length
+
+Estimate narration length using the selected speaking speed.
+
+A reasonable initial estimate is approximately 120–150 spoken words per minute, adjustable by the user.
+
+For example, 45 minutes at 130 spoken words per minute is approximately 5,850 words.
+
+The actual script length should account for pauses, transitions, and non-speaking sections.
+
+Generate long scripts in manageable sections.
+
+Save each completed section so an interrupted project can resume.
+
+Allow the user to inspect and edit the script before generation.
+
+---
+
+# 7. SCENE PLANNING
+
+Convert the script into a structured scene manifest.
+
+Each scene should include, where applicable:
+
+- Unique scene ID.
+- Scene title.
+- Narration text.
+- Estimated duration.
+- Visual description.
+- Characters.
+- Environment.
+- Camera movement.
+- Animation style.
+- Asset generation method.
+- Subtitle information.
+- Background audio.
+- Transition.
+- Asset paths.
+- Generation status.
+- Error information.
+- Retry count.
+
+Store scene information in a documented format such as JSON.
+
+Example:
+
+{
+  "scene_id": "scene_001",
+  "title": "Opening",
+  "duration_seconds": 12,
+  "visual_description": "A cinematic view of Earth from space",
+  "animation_method": "animated_illustration",
+  "narration_text": "Our story begins billions of years ago...",
+  "status": "planned"
+}
+
+Validate the manifest before generation.
+
+Divide long projects into sensible sequences.
+
+Maintain scene continuity and character consistency where practical.
+
+Let users edit scenes before generation.
+
+---
+
+# 8. VISUAL GENERATION AND ANIMATION
+
+Implement four primary visual modes.
+
+## Mode A: AI-generated video
+
+Use a compatible AI video-generation backend when genuinely available.
+
+Check:
+
+- Installation.
+- Model availability.
+- Hardware requirements.
+- Provider availability.
+- Input compatibility.
+- Output compatibility.
+- Licensing.
+- Usage restrictions.
+- Expected processing time when measurable.
+
+Do not require a powerful GPU for the basic application.
+
+If no compatible AI video backend is available, offer a fallback.
+
+## Mode B: Animated illustrations
+
+This is a required core feature.
+
+It must work without a dedicated GPU or large AI model.
+
+Create real animated scenes using images or illustrations and effects such as:
+
+- Pan.
+- Zoom.
+- Ken Burns motion.
+- Slow camera pushes.
+- Camera pans.
+- Parallax where feasible.
+- Crossfades.
+- Scene transitions.
+- Animated text.
+- Motion graphics.
+- Layer movement.
+- Appropriate visual effects.
+
+Avoid identical movement in every scene.
+
+Vary compositions, camera movement, framing, transitions, and visual emphasis.
+
+Use visuals relevant to the narration rather than unrelated generic images.
+
+## Mode C: Hybrid animation
+
+Combine compatible AI-generated clips, generated images, user-provided assets, and animated illustrations.
+
+Record the generation method for every scene.
+
+## Mode D: Procedural motion graphics
+
+Create meaningful visuals using:
+
+- Text.
+- Shapes.
+- Diagrams.
+- Charts.
+- Timelines.
+- Maps where appropriate.
+- Educational graphics.
+- Other topic-relevant visual elements.
+
+Do not substitute random shapes for meaningful visuals when the topic requires specific subject matter.
+
+## 8.1 Visual consistency
+
+Maintain consistency in:
+
+- Characters.
+- Clothing.
+- Art style.
+- Color palette.
+- Environment.
+- Lighting.
+- Visual identity.
+
+Where supported, reuse reference assets.
+
+Disclose limitations when a generation method cannot maintain consistent characters.
+
+---
+
+# 9. FREE AI PROVIDER SYSTEM
+
+Create a modular provider architecture.
+
+Support separate capabilities for:
+
+- Text generation.
+- Translation.
+- Image generation.
+- Video generation.
+- Text-to-speech.
+- Optional music generation.
+
+Each provider must report:
+
+- Installed or not installed.
+- Configured or not configured.
+- Available or unavailable.
+- Supported languages.
+- Supported capabilities.
+- Hardware requirements where applicable.
+- Model size where known.
+- Account requirements.
+- Usage restrictions.
+- Cost status.
+- Licensing considerations.
+
+Never mark a provider available merely because it appears in a configuration file.
+
+## Optional open-source models
+
+Investigate appropriate open-source models, including video-generation projects such as Wan2.1, when compatible with the user's hardware and setup.
+
+Do not make a large model mandatory.
+
+Do not automatically download large models without permission.
+
+Before downloading a model, show its approximate size and explain the disk-space and hardware requirements.
+
+Verify compatibility before presenting a model as usable.
+
+## Free remote services
+
+Optional free remote inference may be supported when legitimately available.
+
+Do not assume unlimited free GPU access.
+
+Do not assume free notebook sessions can run unattended indefinitely.
+
+Do not bypass quotas, session limits, or usage restrictions.
+
+Do not require a remote service for the core application.
+
+Disclose when project data will be sent to a remote provider.
+
+---
+
+# 10. SUBTITLES
+
+Generate subtitles from actual narration.
+
+Support:
+
+- SRT.
+- WebVTT.
+- Optional burned-in subtitles.
+- Optional separate subtitle files.
+- Adjustable font size.
+- Adjustable position.
+- Readable contrast.
+- Configurable subtitle background.
+- Appropriate line length.
+- Subtitle timing validation.
+
+Use actual audio timings when available.
+
+If word-level timing is unavailable, use sentence- or phrase-level timing.
+
+For different narration and subtitle languages, use an appropriate translation workflow and synchronize subtitles with the narration.
+
+For right-to-left languages, validate both text direction and rendered appearance.
+
+Do not claim accurate synchronization unless it has been checked.
+
+---
+
+# 11. BACKGROUND MUSIC AND SOUND EFFECTS
+
+Support optional background music and sound effects.
+
+Use:
+
+- User-provided audio.
+- Appropriately licensed free audio.
+- Generated audio only when a compatible backend is genuinely available.
+
+Record source and licensing information where available.
+
+Implement:
+
+- Adjustable music volume.
+- Narration ducking.
+- Fade-in.
+- Fade-out.
+- Audio normalization where appropriate.
+- Audio synchronization.
+- Protection against clipping.
+- Optional sound effects.
+- Silent mode.
+
+The application must remain functional without background music.
+
+Do not download copyrighted music from unauthorized sources.
+
+---
+
+# 12. VIDEO EXPORT
+
+Support these resolutions:
+
+## 1080p
+
+- Width: 1920 pixels.
+- Height: 1080 pixels.
+
+## 4K
+
+- Width: 3840 pixels.
+- Height: 2160 pixels.
+
+Support configurable frame rates, including 24, 25, and 30 FPS, where practical.
+
+Use FFmpeg for rendering and assembly.
+
+Use FFprobe to inspect and validate output.
+
+Provide configurable:
+
+- Video codec.
+- Audio codec.
+- Encoding preset.
+- Quality settings.
+- Pixel format.
+- Audio sample rate.
+- Output container.
+
+Use MP4 as the default output format.
+
+## 12.1 Resolution honesty
+
+Distinguish between:
+
+1. Native-resolution source material.
+2. Upscaled footage.
+3. A final video resized to 1080p or 4K.
+
+A 4K output container does not guarantee native 4K visual detail.
+
+Report whether the output was resized or upscaled.
+
+Do not promise fast 4K rendering on a low-powered computer.
+
+Offer lower-resource settings and explain the trade-offs.
+
+---
+
+# 13. LOW-RESOURCE MODE
+
+Provide a dedicated low-resource mode.
+
+It should:
+
+- Avoid loading large models unnecessarily.
+- Prefer lightweight operations.
+- Limit worker processes.
+- Avoid loading an entire long video into memory.
+- Process audio and video in manageable chunks.
+- Reuse cached assets.
+- Use sensible encoding presets.
+- Check available disk space.
+- Estimate output size where possible.
+- Offer lower-resolution previews.
+- Avoid unnecessary intermediate files.
+- Release temporary resources after use.
+
+Detect hardware capabilities where practical.
+
+Do not assume a dedicated GPU exists.
+
+If resources are insufficient, explain the issue and offer alternatives.
+
+Do not silently change requested settings.
+
+---
+
+# 14. PROJECT MANAGEMENT AND RESUME
+
+Each project must have its own directory.
+
+Suggested structure:
+
+FreeAnimateAI/
+    app/
+    config/
+    providers/
+    tests/
+    projects/
+        project_name/
+            project.json
+            script/
+            scenes/
+            assets/
+            narration/
+            subtitles/
+            audio/
+            renders/
+            logs/
+            reports/
+    cache/
+    docs/
+    requirements.txt
+    README.md
+    pyproject.toml
+
+Adapt this structure to the existing repository rather than creating unnecessary duplicates.
+
+Save:
+
+- Original prompt.
+- Language settings.
+- Script.
+- Scene manifest.
+- Asset references.
+- Generated files.
+- Narration.
+- Subtitles.
+- Render settings.
+- Provider information.
+- Completion status.
+- Error logs.
+- Final export metadata.
+
+Implement:
+
+- Resume interrupted jobs.
+- Retry failed scenes.
+- Re-render only changed scenes.
+- Rebuild the final video without regenerating every asset.
+- Inspect project status.
+- List previous projects.
+- Clean cache files safely.
+
+Preserve language settings when resuming.
+
+Do not delete project assets without user confirmation.
+
+---
+
+# 15. TERMINAL COMMANDS
+
+Implement a beginner-friendly command-line interface.
+
+Provide commands equivalent to:
+
+    freeanimate create
+
+    freeanimate create --prompt "A story about ancient Egypt" --duration 10
+
+    freeanimate plan <project>
+
+    freeanimate scenes <project>
+
+    freeanimate narration <project>
+
+    freeanimate generate <project>
+
+    freeanimate assemble <project>
+
+    freeanimate export <project> --resolution 1080p
+
+    freeanimate export <project> --resolution 4k
+
+    freeanimate status <project>
+
+    freeanimate resume <project>
+
+    freeanimate projects list
+
+    freeanimate providers list
+
+    freeanimate doctor
+
+    freeanimate benchmark
+
+    freeanimate clean-cache
+
+Adapt the exact syntax as necessary, but preserve equivalent functionality.
+
+The duration argument may use minutes, provided its format is clearly documented.
+
+The interactive creation flow must guide the user through:
+
+1. Prompt.
+2. Video duration.
+3. Project language.
+4. Script language.
+5. Narration language.
+6. Subtitle language.
+7. On-screen text language.
+8. Voice selection.
+9. Animation style.
+10. Export resolution.
+11. Generation mode.
+12. Final confirmation.
+
+Allow default settings to reduce the number of questions for experienced users.
+
+Every exposed command must perform a real operation.
+
+---
+
+# 16. PROGRESS REPORTING
+
+Display genuine progress during long operations.
+
+Example:
+
+Project: Ancient Egypt Documentary  
+Requested duration: 10 minutes  
+Language: English  
+Animation mode: Animated illustrations  
+Resolution: 1080p
+
+[1/7] Preparing script  
+[2/7] Planning scenes  
+[3/7] Preparing visual assets  
+[4/7] Generating narration  
+[5/7] Creating subtitles  
+[6/7] Rendering video  
+[7/7] Validating output
+
+Progress must reflect actual completed work.
+
+When the exact percentage is unknown, display the current stage rather than inventing a percentage.
+
+Display:
+
+- Current operation.
+- Completed scenes.
+- Total scenes.
+- Failed scenes.
+- Retry status.
+- Elapsed time.
+- Estimated remaining time where measurable.
+- Output location.
+- Relevant warnings.
+
+Support safe cancellation and resumption wherever practical.
+
+---
+
+# 17. PERFORMANCE TARGETS
+
+The user wants to create long-form YouTube videos of up to 45 minutes, ideally in less than one hour.
+
+Treat this as an optimization goal, not a guarantee.
+
+Before starting, estimate:
+
+- Script preparation time.
+- Narration generation time.
+- Visual generation time.
+- Animation and rendering time.
+- Disk-space requirements.
+- Output file size.
+- Hardware limitations.
+- Provider quotas and queue times.
+
+Use measured benchmark data when available.
+
+Label estimates as preliminary when no relevant benchmark exists.
+
+Optimize by:
+
+- Caching assets.
+- Rendering scenes independently.
+- Reusing completed outputs.
+- Avoiding unnecessary regeneration.
+- Using hardware acceleration only when available and compatible.
+- Choosing sensible encoding presets.
+- Using animated illustrations as a fast fallback.
+- Resuming interrupted work.
+
+Never promise that 45 minutes of fully AI-generated footage can be created in under one hour on a low-powered laptop.
+
+Distinguish generation time from final assembly time.
+
+---
+
+# 18. FINAL VIDEO VALIDATION
+
+After rendering, use FFprobe or equivalent tools to verify:
+
+- The file exists.
+- The file is not empty.
+- The container is readable.
+- A video stream exists.
+- An audio stream exists when audio was requested.
+- Resolution matches the selected export dimensions.
+- Actual duration is close to the requested duration.
+- Frame rate is reported correctly.
+- Audio and video durations are compatible.
+- Subtitle files exist when requested.
+- Required scenes are present.
+- The file can be decoded or otherwise validated.
+
+If validation fails, report the failure.
+
+Do not claim success merely because FFmpeg was launched.
+
+Provide a final report containing:
+
+- Output file path.
+- Actual duration.
+- Resolution.
+- Frame rate.
+- Audio status.
+- Subtitle status.
+- Project language.
+- Script language.
+- Narration language.
+- Subtitle language.
+- Visual generation methods used.
+- Whether AI-generated video footage was used.
+- Whether upscaling was applied.
+- Any known limitations or incomplete scenes.
+
+---
+
+# 19. CONFIGURATION AND SECURITY
+
+Provide a documented configuration system.
+
+Allow settings for:
+
+- Default duration.
+- Default resolution.
+- Frame rate.
+- Project language.
+- Script language.
+- Narration language.
+- Subtitle language.
+- On-screen text language.
+- Narration voice.
+- Subtitle appearance.
+- Animation style.
+- Render preset.
+- Cache location.
+- Worker count.
+- Optional provider settings.
+
+Do not hard-code credentials.
+
+Do not commit API keys or tokens.
+
+Do not print secrets in logs.
+
+Paid provider integrations must never be enabled or required by default.
+
+The application must remain usable when all optional remote providers are disabled.
+
+---
+
+# 20. WINDOWS COMPATIBILITY
+
+The primary environment is a Windows laptop.
+
+Requirements:
+
+- Support Windows PowerShell.
+- Use `pathlib` for paths.
+- Handle paths containing spaces.
+- Avoid requiring Linux-only shell commands.
+- Do not require WSL unless an optional backend specifically needs it.
+- Provide Windows-compatible installation instructions.
+- Provide virtual environment setup commands.
+- Provide a Windows launcher.
+- Handle subprocess failures.
+- Check disk space before large downloads.
+- Do not download large models without confirmation.
+- Explain how to clean caches safely.
+
+Do not assume CUDA or a dedicated GPU exists.
+
+---
+
+# 21. TESTING REQUIREMENTS
+
+Create and run automated tests for:
+
+1. Configuration loading.
+2. Invalid configuration.
+3. All predefined duration choices.
+4. Custom duration validation.
+5. Script and scene-manifest validation.
+6. Scene-duration calculations.
+7. Windows path handling.
+8. Project resume.
+9. Failed-scene retries.
+10. Subtitle timestamp validation.
+11. FFmpeg command construction.
+12. FFprobe metadata parsing.
+13. Resolution validation.
+14. Missing FFmpeg.
+15. Missing TTS engines.
+16. Missing optional providers.
+17. Provider capability detection.
+18. Unicode text handling.
+19. Language selection.
+20. Custom language input.
+21. Unsupported-language handling.
+22. Separate script and narration languages.
+23. Separate narration and subtitle languages.
+24. Right-to-left text handling.
+25. Missing-font handling.
+26. Voice availability detection.
+27. Cache management.
+28. Final output validation.
+
+Use mocks for remote services where appropriate.
+
+The test suite must not require paid APIs or large AI models.
+
+Use small locally generated media files for integration tests.
+
+Where FFmpeg is installed, generate a short real MP4 and validate it using FFprobe.
+
+Test at least one non-English sample where the required tools are available.
+
+For Urdu or Arabic, inspect the actual rendered text to verify correct letter shaping and right-to-left presentation.
+
+Clearly report passed, failed, and skipped tests.
+
+Never claim a test passed unless it actually ran and passed.
+
+---
+
+# 22. END-TO-END ACCEPTANCE TEST
+
+The project is not complete until the core workflow can produce a real video.
+
+Use the lightweight fallback pipeline.
+
+The test must:
+
+1. Accept a real text prompt.
+2. Select a supported language.
+3. Create a structured script.
+4. Create a scene manifest.
+5. Prepare actual visual assets or procedural illustrations.
+6. Generate narration using an available free TTS engine, when installed.
+7. Generate subtitles when supported.
+8. Animate the visuals.
+9. Assemble a real MP4 using FFmpeg.
+10. Validate the MP4 using FFprobe.
+11. Report the actual output and any limitations.
+
+If an optional component is unavailable, use a supported fallback or report the limitation.
+
+Do not use an unrelated existing video and claim the application generated it.
+
+Do not require a paid service or a large local AI model for this test.
+
+---
+
+# 23. DOCUMENTATION
+
+Create or update the README and Windows setup guide.
+
+Document:
+
+- What FreeAnimate AI does.
+- What it cannot guarantee.
+- Hardware requirements.
+- Zero-cost operating principles.
+- Windows installation.
+- Python setup.
+- FFmpeg installation.
+- Text-to-speech setup.
+- Optional model installation.
+- Optional provider setup.
+- Language selection.
+- Supported languages and how to check availability.
+- Voice selection.
+- Right-to-left text rendering.
+- Subtitle settings.
+- Duration selection.
+- 1080p export.
+- 4K export.
+- Resuming a project.
+- Troubleshooting.
+- Cache cleanup.
+- Licensing considerations.
+- Performance expectations.
+- Known limitations.
+
+Provide exact PowerShell commands that match the implemented software.
+
+Do not document features that do not exist.
+
+---
+
+# 24. IMPLEMENTATION WORKFLOW
+
+## Phase 1: Inspect the existing repository
+
+Inspect:
+
+- Existing files.
+- Current project structure.
+- Python version.
+- Dependencies.
+- Implemented features.
+- Broken functionality.
+- Existing tests.
+- Windows compatibility.
+- FFmpeg and FFprobe availability.
+
+Preserve useful existing work.
+
+Do not create a separate application unnecessarily.
+
+## Phase 2: Create a practical implementation plan
+
+Prioritize the core video pipeline.
+
+Identify unsuitable dependencies and optional features that should not block development.
+
+## Phase 3: Implement the core application
+
+Implement:
+
+- CLI.
+- Interactive menus.
+- Duration selection.
+- Language selection.
+- Project manifests.
+- Script and scene planning.
+- Visual assets.
+- Animation fallback.
+- TTS integration.
+- Subtitle generation.
+- Audio mixing.
+- FFmpeg assembly.
+- Export validation.
+- Resume support.
+
+## Phase 4: Add optional AI integrations
+
+Add compatible AI image and video backends only when practical.
+
+Keep optional providers separate from the core application.
+
+## Phase 5: Implement multilingual rendering
+
+Add:
+
+- Independent language settings.
+- Voice capability detection.
+- Unicode handling.
+- Right-to-left text support.
+- Compatible font selection.
+- Subtitle translation workflows where available.
+- Tests for non-English output.
+
+## Phase 6: Test and repair
+
+Run the tests.
+
+Fix actual failures.
+
+Generate a real short video.
+
+Inspect its output metadata and verify that it can be played.
+
+## Phase 7: Document
+
+Update installation instructions and usage examples.
+
+## Phase 8: Report
+
+Report:
+
+- Implemented features.
+- Files created or modified.
+- Commands executed.
+- Actual test results.
+- Whether a real MP4 was produced.
+- Output location.
+- FFprobe validation results.
+- Available and unavailable language capabilities.
+- Remaining limitations.
+
+If something could not be implemented or tested, state so clearly.
+
+---
+
+# 25. DEFINITION OF DONE
+
+FreeAnimate AI is complete only when:
+
+- It runs on Windows.
+- It has a working terminal interface.
+- It accepts a text prompt.
+- It offers 5-, 10-, 15-, 20-, 25-, 30-, 40-, and 45-minute durations plus custom duration.
+- It supports configurable project languages.
+- It allows independent script, narration, subtitle, and on-screen text languages.
+- It checks the actual availability of voices and language capabilities.
+- It handles Unicode correctly.
+- It supports right-to-left rendering where required.
+- It creates a structured script and scene plan.
+- It has a functional low-resource animation pipeline.
+- It supports free narration when a suitable engine and voice are available.
+- It generates subtitles when requested and supported.
+- It assembles genuine MP4 files.
+- It supports 1080p and 4K export, subject to available resources.
+- It validates output with real tools.
+- It saves and resumes projects.
+- It does not require a paid API.
+- It does not require a powerful GPU for the fallback pipeline.
+- It includes automated tests and accurate documentation.
+- It reports limitations honestly.
+
+**A working, reliable, lightweight video creator is more important than a large collection of untested AI integrations.**
+
+---
+
+# FINAL INSTRUCTION TO OPENCODE
+
+Begin by inspecting the existing repository and identifying its actual state.
+
+Then implement the application in small, verifiable phases.
+
+Do not stop after producing a plan.
+
+Do not replace functioning code unnecessarily.
+
+Do not leave essential features as placeholders.
+
+Do not claim that every language, voice, or AI model is supported without verifying it.
+
+Do not claim unlimited free AI generation.
+
+Do not promise that a 45-minute AI-generated video will render in under one hour without actual benchmarks supporting that claim.
+
+Prioritize a working fallback that can create a real video using animated illustrations, narration, subtitles, and FFmpeg.
+
+Preserve all user requirements, especially:
+
+1. Completely free core operation.
+2. Windows and low-resource compatibility.
+3. Duration options from 5 to 45 minutes plus custom duration.
+4. Multilingual script, narration, subtitles, and on-screen text.
+5. Urdu and other right-to-left text support.
+6. 1080p and 4K export.
+7. Real AI generation when a compatible free backend is available.
+8. A reliable non-AI fallback.
+9. Project saving and resumption.
+10. Real testing and honest reporting.
+
+**Start with repository inspection. Then implement, run tests, fix failures, produce a real test video, validate it, and document the working application.**

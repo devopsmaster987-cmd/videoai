@@ -1,0 +1,315 @@
+{
+  "languages": [
+    {
+      "code": "en",
+      "name": "English",
+      "native": "English",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "ur",
+      "name": "Urdu",
+      "native": "اردو",
+      "rtl": true,
+      "script": "arabic",
+      "font_hints": [
+        "arial.ttf",
+        "Jameel Noori Nastaleeq.ttf",
+        "NotoNastaliqUrdu-Regular.ttf",
+        "Nirmala.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "hi",
+      "name": "Hindi",
+      "native": "हिन्दी",
+      "rtl": false,
+      "script": "devanagari",
+      "font_hints": [
+        "Nirmala.ttf",
+        "mangal.ttf",
+        "NotoSansDevanagari-Regular.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "ar",
+      "name": "Arabic",
+      "native": "العربية",
+      "rtl": true,
+      "script": "arabic",
+      "font_hints": [
+        "arial.ttf",
+        "simsun.ttc",
+        "NotoNaskhArabic-Regular.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "native": "Español",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "fr",
+      "name": "French",
+      "native": "Français",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "de",
+      "name": "German",
+      "native": "Deutsch",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "pt",
+      "name": "Portuguese",
+      "native": "Português",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "zh",
+      "name": "Chinese",
+      "native": "中文",
+      "rtl": false,
+      "script": "cjk",
+      "font_hints": [
+        "msyh.ttc",
+        "simsun.ttc",
+        "NotoSansCJK-Regular.ttc"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "ja",
+      "name": "Japanese",
+      "native": "日本語",
+      "rtl": false,
+      "script": "cjk",
+      "font_hints": [
+        "msgothic.ttc",
+        "meiryob.ttc",
+        "NotoSansJP-Regular.ttc"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "ko",
+      "name": "Korean",
+      "native": "한국어",
+      "rtl": false,
+      "script": "cjk",
+      "font_hints": [
+        "malgun.ttf",
+        "NotoSansKR-Regular.ttc"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "tr",
+      "name": "Turkish",
+      "native": "Türkçe",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "ru",
+      "name": "Russian",
+      "native": "Русский",
+      "rtl": false,
+      "script": "cyrillic",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "bn",
+      "name": "Bengali",
+      "native": "বাংলা",
+      "rtl": false,
+      "script": "bengali",
+      "font_hints": [
+        "Nirmala.ttf",
+        "Vrinda.ttf",
+        "NotoSansBengali-Regular.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "pa",
+      "name": "Punjabi",
+      "native": "ਪੰਜਾਬੀ / پنجابی",
+      "rtl": false,
+      "script": "gurmukhi",
+      "font_hints": [
+        "Nirmala.ttf",
+        "NotoSansGurmukhi-Regular.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "it",
+      "name": "Italian",
+      "native": "Italiano",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "id",
+      "name": "Indonesian",
+      "native": "Bahasa Indonesia",
+      "rtl": false,
+      "script": "latin",
+      "font_hints": [
+        "arial.ttf",
+        "segoeui.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "fa",
+      "name": "Persian",
+      "native": "فارسی",
+      "rtl": true,
+      "script": "arabic",
+      "font_hints": [
+        "arial.ttf",
+        "NotoNaskhArabic-Regular.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    },
+    {
+      "code": "he",
+      "name": "Hebrew",
+      "native": "עברית",
+      "rtl": true,
+      "script": "hebrew",
+      "font_hints": [
+        "arial.ttf",
+        "Nirmala.ttf"
+      ],
+      "tts": [
+        "sapi",
+        "espeak",
+        "piper"
+      ]
+    }
+  ]
+}

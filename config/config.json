@@ -1,0 +1,58 @@
+{
+  "defaults": {
+    "duration_minutes": 10,
+    "resolution": "1080p",
+    "fps": 24,
+    "animation_mode": "hybrid",
+    "transition": "fade",
+    "project_language": "en",
+    "script_language": null,
+    "narration_language": null,
+    "subtitle_language": null,
+    "onscreen_language": null,
+    "wpm": 130,
+    "burn_subtitles": true,
+    "music": "none",
+    "music_volume": 0.18,
+    "low_resource": false,
+    "duration_tolerance": 0.15
+  },
+  "render": {
+    "video_codec": "libx264",
+    "audio_codec": "aac",
+    "x264_preset": "veryfast",
+    "pixel_format": "yuv420p",
+    "sample_rate": 44100,
+    "container": "mp4",
+    "crf": 21
+  },
+  "tts": {
+    "engine": "auto",
+    "voice": null,
+    "speed": 1.0,
+    "volume": 1.0,
+    "chunk_chars": 1800
+  },
+  "subtitles": {
+    "font_size": 42,
+    "margin_v": 60,
+    "outline": 2,
+    "shadow": 1,
+    "max_line_chars": 46,
+    "max_lines": 2
+  },
+  "paths": {
+    "projects_dir": "projects",
+    "cache_dir": "cache"
+  },
+  "providers": {
+    "text": "template",
+    "translation": "none",
+    "image": "procedural",
+    "video": "illustration"
+  },
+  "network": {
+    "allow_translation_upload": false
+  },
+  "workers": 1
+}

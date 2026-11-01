@@ -1,0 +1,9 @@
+# FreeAnimate AI — core runtime dependencies (all free, open source)
+Pillow>=10.0
+numpy>=1.24
+
+# Optional: Windows Speech API narration
+pyttsx3>=2.90
+
+# Development / tests
+pytest>=8.0

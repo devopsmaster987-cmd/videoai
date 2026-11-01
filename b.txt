@@ -1,0 +1,1071 @@
+# MASTER PROMPT: FREEANIMATE AI
+## Free, Offline-First AI Video Creator, Animation Studio, and YouTube Thumbnail Generator
+
+You are a senior Python engineer, AI video-generation specialist, multimedia developer, computer-vision engineer, UI/UX designer, and software testing engineer.
+
+Your task is to inspect, improve, complete, and validate my existing project called **FreeAnimate AI**.
+
+**Project directory:** `C:\Users\LENOVO\.ssh\videoai`
+
+Do not rebuild the project from scratch. Inspect the existing repository, understand its architecture, preserve working functionality, and implement the missing features in the current codebase.
+
+The application must work on a Windows laptop with limited computing resources.
+
+My primary goal is to create complete YouTube videos of 5–45 minutes, including scripts, visuals, narration when a suitable voice is available, subtitles, animation, music, final video assembly, and three YouTube thumbnails with a recommendation for the best one.
+
+The application should be as capable as reasonably possible while remaining free to use.
+
+---
+
+# 1. CORE MISSION
+
+Build a reliable, modular, beginner-friendly, terminal-based video creation application that transforms a topic or script into a finished video project.
+
+The application should support:
+
+1. Topic-to-video workflows.
+2. Script-to-video workflows.
+3. Multilingual script generation and rendering.
+4. Scene planning and storyboarding.
+5. Local AI image generation when a compatible model is available.
+6. AI video generation when a compatible backend is available.
+7. Procedural graphics and animated illustrations as fallbacks.
+8. Camera movement and transitions.
+9. Local text-to-speech narration.
+10. Multilingual subtitles.
+11. Optional music and sound effects.
+12. Full video assembly and export.
+13. Three automatically generated YouTube thumbnails.
+14. Automatic thumbnail comparison and recommendation.
+15. Project saving, resuming, and recovering from failures.
+16. Quality checks and actual media-file validation.
+
+The software must distinguish between genuinely AI-generated media and procedural animation.
+
+Never claim that a feature works if it is only a placeholder.
+
+Never create fake progress, fabricated test results, imaginary AI capabilities, or misleading success messages.
+
+---
+
+# 2. FREE-TO-USE REQUIREMENTS
+
+The application must not require:
+
+- Paid AI APIs.
+- Paid subscriptions.
+- Paid cloud GPUs.
+- Mandatory cloud rendering.
+- Paid stock-media services.
+- Mandatory online accounts.
+- A continuously available internet connection for local workflows.
+
+Prefer free, local, open-source tools when appropriate.
+
+Possible components include:
+
+- Python.
+- FFmpeg and FFprobe.
+- Pillow.
+- ImageMagick, if useful and available.
+- ASS subtitle rendering through a compatible FFmpeg/libass build.
+- Local text-to-speech engines.
+- Installed open-source image-generation models.
+- Compatible local AI video-generation models.
+- Existing local fonts, images, and audio assets.
+
+Verify compatibility, licensing, disk-space requirements, and system requirements before integrating a dependency or model.
+
+Do not automatically download large models.
+
+Before downloading a large model, explain its size, license, hardware requirements, expected performance, and purpose. Ask for permission.
+
+If an optional AI model is unavailable, the application must continue working using its supported fallback modes.
+
+Never imply that unlimited, high-quality AI video generation is possible for free on every laptop.
+
+---
+
+# 3. SUPPORTED VIDEO DURATIONS
+
+Provide these exact preset durations:
+
+- 5 minutes.
+- 10 minutes.
+- 15 minutes.
+- 20 minutes.
+- 25 minutes.
+- 30 minutes.
+- 40 minutes.
+- 45 minutes.
+
+Also support custom durations.
+
+Examples:
+
+- 2 minutes.
+- 7 minutes.
+- 12 minutes.
+- 35 minutes.
+- 60 minutes, if the system can handle it.
+
+The application must validate duration input and reject invalid values with understandable error messages.
+
+A selected duration must affect the complete production plan, including:
+
+- Script length.
+- Scene count.
+- Scene durations.
+- Narration duration.
+- Subtitle timing.
+- Music timing.
+- Transitions.
+- Final timeline.
+- Export duration.
+
+Do not merely change the output duration label while producing the same short video.
+
+Use realistic speech-speed estimates and calculate approximate narration length before rendering.
+
+Avoid artificially extending a video with excessive blank frames, repeated scenes, long silent sections, or meaningless filler.
+
+The finished video should be within a configurable duration tolerance. Explain when speech or scene timing prevents an exact match.
+
+For a requested five-minute video, target approximately five minutes and validate the actual output using FFprobe.
+
+---
+
+# 4. MULTILINGUAL SUPPORT
+
+Provide a language-selection menu containing:
+
+1. English.
+2. Urdu.
+3. Hindi.
+4. Arabic.
+5. Spanish.
+6. French.
+7. German.
+8. Portuguese.
+9. Chinese.
+10. Japanese.
+11. Korean.
+12. Turkish.
+13. Russian.
+14. Bengali.
+15. Punjabi.
+16. Italian.
+17. Indonesian.
+18. Other/custom language.
+
+Support Unicode throughout the application.
+
+Users must be able to configure these languages independently:
+
+- Project language.
+- Script language.
+- Narration language.
+- Subtitle language.
+- On-screen text language.
+- Thumbnail text language.
+
+By default, these should match the project language. Users can change them individually.
+
+The application must not silently translate content into English or substitute an unrelated narration voice.
+
+If a language is unsupported by the installed script-generation or narration system, explain the limitation and provide the best available workflow.
+
+## Urdu and Arabic requirements
+
+Support right-to-left text correctly.
+
+Requirements include:
+
+- Correct text direction.
+- Proper glyph shaping.
+- Connected Arabic-script letters.
+- Appropriate fonts.
+- Correct punctuation placement.
+- Proper subtitle positioning.
+- Correct on-screen title rendering.
+- Correct thumbnail text rendering.
+
+Inspect actual rendered output rather than assuming that Unicode support guarantees correct visual rendering.
+
+Use compatible text-shaping libraries and subtitle-rendering tools where required.
+
+If a suitable language font is missing, explain how to install one or use a suitable existing font.
+
+Do not silently render broken or disconnected characters.
+
+---
+
+# 5. SCRIPT AND STORY GENERATION
+
+Support two main input modes.
+
+## Mode A: Topic to video
+
+The user enters a topic, such as:
+
+"The history of the universe."
+
+The application should prepare:
+
+- A working title.
+- A central idea.
+- A target audience, if specified.
+- An introduction.
+- Main sections.
+- Scene descriptions.
+- Narration.
+- Transitions between sections.
+- A conclusion.
+- Optional calls to action.
+
+## Mode B: Existing script to video
+
+The user supplies a text file containing an existing script.
+
+The application should:
+
+- Read the script.
+- Preserve its intended meaning.
+- Divide it into appropriate scenes.
+- Estimate narration duration.
+- Generate a scene manifest.
+- Assign visuals to each scene.
+- Generate subtitles.
+- Assemble the video.
+
+Do not replace a user's script with unrelated generic content.
+
+For factual, educational, historical, scientific, medical, or financial topics, do not invent facts or present unsupported claims as verified information.
+
+If no capable local language model is available, explain the limitation and allow the user to supply a script manually.
+
+A template-based script workflow may be provided, but it must be identified honestly as template-based rather than advanced AI reasoning.
+
+---
+
+# 6. SCENE PLANNING
+
+Create a scene manifest for every video.
+
+Each scene should record relevant information, including:
+
+- Scene identifier.
+- Scene title.
+- Narration text.
+- Approximate duration.
+- Visual description.
+- Visual-generation method.
+- Image or video asset paths.
+- Camera movement.
+- Transition.
+- Subtitle text.
+- Optional sound effects.
+- Rendering status.
+
+The scene planner should create visual variety while maintaining consistency across the video.
+
+Avoid repeating the same background for every scene unless repetition is intentional.
+
+For long videos, maintain a coherent narrative and avoid unnecessary repetition.
+
+The application should be able to resume from the last successfully completed stage after a failure.
+
+---
+
+# 7. VISUAL GENERATION MODES
+
+Implement the following modes where technically possible.
+
+## Mode A: AI-generated video
+
+Use a compatible local AI video-generation backend if one is installed and its requirements are satisfied.
+
+Before enabling it, verify:
+
+- Model availability.
+- Hardware requirements.
+- Model licensing.
+- Memory requirements.
+- Input and output compatibility.
+- Actual inference capability.
+
+Do not pretend that procedural animation is AI-generated video.
+
+If no compatible backend is available, explain that this mode is unavailable and offer the supported alternatives.
+
+## Mode B: AI-generated images
+
+Generate or reuse scene images through a compatible local image-generation model.
+
+Use the images to create visually engaging scenes with movement.
+
+## Mode C: Animated illustrations
+
+When AI-generated media is unavailable, create animations from images, illustrations, and other available assets.
+
+Support:
+
+- Pan.
+- Zoom.
+- Ken Burns movement.
+- Camera movement.
+- Crossfades.
+- Scene transitions.
+- Layered compositions.
+- Animated titles.
+- Motion graphics.
+
+## Mode D: Procedural graphics
+
+Create scenes using procedural visual elements, gradients, shapes, diagrams, particles, typography, and other suitable graphics.
+
+Use topic-appropriate visuals instead of generic backgrounds wherever possible.
+
+## Mode E: Hybrid production
+
+Combine available generated images, existing media, procedural graphics, animation, narration, and subtitles.
+
+Make the chosen visual-generation method clear in the project report.
+
+---
+
+# 8. CAMERA MOVEMENT AND ANIMATION
+
+Support configurable visual movement, including:
+
+- Slow zoom in.
+- Slow zoom out.
+- Horizontal pan.
+- Vertical pan.
+- Ken Burns effect.
+- Crossfade.
+- Fade in.
+- Fade out.
+- Motion graphics.
+- Animated captions.
+- Scene-specific movement.
+
+Avoid excessive movement that makes text difficult to read.
+
+Prevent black borders, unintended cropping, aspect-ratio distortion, and visual discontinuities.
+
+Provide sensible defaults for documentary, educational, cinematic, and storytelling content.
+
+---
+
+# 9. LOCAL NARRATION
+
+Integrate available local text-to-speech engines.
+
+The application should inspect installed voices and determine which languages are supported.
+
+For each voice, identify the supported language when the engine provides reliable metadata.
+
+Allow the user to select:
+
+- Narration language.
+- Available voice.
+- Speech rate.
+- Volume.
+- Optional pauses.
+
+If a compatible Urdu voice is unavailable, do not use an English voice to read Urdu text.
+
+Instead, explain the limitation and offer these choices:
+
+1. Generate the video without narration.
+2. Supply prerecorded narration.
+3. Install a compatible free local Urdu voice.
+4. Generate narration later when a suitable voice becomes available.
+
+Apply equivalent rules to other unsupported languages.
+
+Keep narration timing aligned with scenes and subtitles.
+
+Avoid abrupt audio cuts.
+
+Report actual narration availability and generation status.
+
+---
+
+# 10. SUBTITLE GENERATION
+
+Generate subtitles from the actual narration or supplied script.
+
+Support:
+
+- SRT.
+- WebVTT.
+- Burned-in subtitles.
+- Optional external subtitle files.
+
+Requirements:
+
+- Correct timestamps.
+- Proper scene alignment.
+- Readable text.
+- Suitable line lengths.
+- Correct language rendering.
+- Correct right-to-left handling where required.
+- Appropriate margins.
+- No unintended clipping.
+- No subtitles extending beyond the video duration.
+
+Use ASS subtitles or another compatible rendering method when advanced text shaping is needed.
+
+Inspect rendered frames for languages such as Urdu and Arabic.
+
+Do not claim correct RTL rendering without verification.
+
+---
+
+# 11. MUSIC AND SOUND EFFECTS
+
+Support optional background music and sound effects.
+
+Prefer:
+
+- Locally generated procedural music.
+- User-supplied audio.
+- Properly licensed free audio assets.
+- Other compatible local audio-generation tools.
+
+Do not assume that an audio file is copyright-free merely because it is available online.
+
+Provide a way to disable music and sound effects.
+
+Mix narration and background audio at sensible levels.
+
+Prevent clipping and abrupt endings.
+
+Fit music to the final video duration and fade it appropriately.
+
+---
+
+# 12. AUTOMATIC YOUTUBE THUMBNAIL GENERATION
+
+**This is a required part of the normal video-generation workflow.**
+
+Whenever a video finishes successfully, FreeAnimate AI must automatically generate exactly three distinct YouTube thumbnail options related to that video's actual content.
+
+The user should not need a separate application to create the thumbnails.
+
+## 12.1 Analyze the video
+
+Before creating thumbnails, use available project information to understand:
+
+- Video title.
+- Topic.
+- Script.
+- Main concepts.
+- Important scenes.
+- Intended audience, if specified.
+- Visual style.
+- Mood.
+- Project language.
+- Thumbnail text language.
+
+Reuse the existing scene manifest, generated images, and other appropriate assets whenever possible.
+
+Do not invent people, events, statistics, or other details that misrepresent the video.
+
+## 12.2 Create three distinct thumbnail concepts
+
+### Thumbnail 1: Recommended, high click appeal
+
+Create a strong focal subject with:
+
+- Clear visual hierarchy.
+- Strong contrast.
+- Good composition.
+- Readable text when appropriate.
+- Accurate representation of the video.
+- A visually compelling presentation.
+
+### Thumbnail 2: Cinematic and professional
+
+Use:
+
+- Cinematic composition.
+- Suitable lighting.
+- Professional visual balance.
+- A style appropriate to the video's topic.
+
+### Thumbnail 3: Creative alternative
+
+Create a noticeably different composition, concept, or visual style.
+
+It must remain relevant to the same video.
+
+Do not create three nearly identical images with only minor color changes.
+
+## 12.3 Use free thumbnail-generation methods
+
+Use the following preference order:
+
+1. Reuse appropriate generated scene images.
+2. Use a compatible installed local AI image-generation model.
+3. Compose original thumbnails from available images and assets using Pillow, SVG, or other suitable local tools.
+4. Use procedural graphics and typography when appropriate.
+
+Do not require paid image-generation APIs.
+
+Do not automatically download large models.
+
+Do not describe a procedural composition as AI-generated artwork.
+
+If no suitable imagery is available, create the best valid composition possible using supported assets and report its limitations.
+
+## 12.4 YouTube thumbnail specifications
+
+Generate each thumbnail at:
+
+- Width: 1280 pixels.
+- Height: 720 pixels.
+- Aspect ratio: 16:9.
+- Format: JPEG.
+- Color mode: RGB-compatible.
+- Appropriate image quality and file size.
+
+Validate the resulting files.
+
+Prevent:
+
+- Black bars.
+- Unwanted borders.
+- Blank images.
+- Incorrect dimensions.
+- Clipped subjects.
+- Unreadable text.
+- Broken fonts.
+- Accidental transparency.
+- Unrelated imagery.
+
+Use appropriate font sizes and contrast so thumbnails remain readable at small preview sizes.
+
+## 12.5 Multilingual thumbnail text
+
+Generate concise thumbnail text when it improves the design.
+
+Text should match the configured thumbnail language.
+
+Use the full video title only when it fits naturally.
+
+For Urdu and Arabic, ensure correct RTL direction, shaping, joining, and punctuation.
+
+For other languages, ensure correct Unicode rendering.
+
+If correct text rendering cannot be verified, prefer a text-free thumbnail over broken or misleading text.
+
+Do not add unsupported claims, fake statistics, or exaggerated promises.
+
+## 12.6 Compare and score the three thumbnails
+
+After generating the thumbnails, evaluate them using this scoring system:
+
+| Criterion | Maximum score |
+|---|---:|
+| Topic relevance | 25 |
+| Visual clarity | 20 |
+| Text readability | 15 |
+| Contrast | 10 |
+| Composition | 10 |
+| Audience relevance | 10 |
+| Distinctiveness | 5 |
+| Honesty and accuracy | 5 |
+| Total | 100 |
+
+Implement a consistent, documented scoring method.
+
+Scores should reflect actual evaluated characteristics, not arbitrary random values.
+
+Use available image-processing measurements and documented heuristic rules where possible.
+
+Explain the main strengths and weaknesses of each thumbnail.
+
+Recommend the highest-scoring thumbnail that passes the quality checks.
+
+Reject a thumbnail if it contains critical defects, even when its numerical score is high.
+
+**Important:** The score is a heuristic design assessment. It is not a prediction of actual YouTube click-through rate, views, or subscriber growth.
+
+Never claim that the recommended thumbnail is guaranteed to perform better.
+
+## 12.7 Display the recommendation
+
+After video generation, display a report similar to:
+
+VIDEO GENERATION COMPLETE
+
+Video:
+projects/example/renders/freeanimate_final.mp4
+
+THUMBNAIL OPTIONS
+
+1. Recommended — Cinematic Concept
+   Score: 91/100
+   Strengths: Clear subject, strong contrast, excellent topic relevance.
+   Weaknesses: Composition could be more distinctive.
+
+2. Professional — Documentary Concept
+   Score: 86/100
+   Strengths: Clean composition and professional appearance.
+   Weaknesses: Less visually dramatic.
+
+3. Creative — Alternative Concept
+   Score: 83/100
+   Strengths: Distinctive visual style.
+   Weaknesses: Less immediately clear at small sizes.
+
+RECOMMENDATION
+
+Choose Thumbnail 1 because it provides the clearest and most relevant presentation of the video's subject.
+
+The scores above are illustrative examples. The application must calculate the actual scores for the generated thumbnails.
+
+## 12.8 Thumbnail user controls
+
+Allow the user to:
+
+- View or open each thumbnail.
+- Open the thumbnails folder.
+- Choose thumbnail 1, 2, or 3.
+- Accept the recommended thumbnail.
+- Copy the selected image to `youtube_thumbnail.jpg`.
+- Regenerate one thumbnail.
+- Regenerate all three thumbnails.
+- Change thumbnail text.
+- Change thumbnail language.
+- Request another visual style.
+
+Do not regenerate the entire video merely to change a thumbnail.
+
+Do not overwrite a previously selected thumbnail without confirmation.
+
+## 12.9 Thumbnail output structure
+
+Use the project's existing directory conventions. A suitable example is:
+
+projects/
+└── example_video/
+    ├── renders/
+    │   └── freeanimate_final.mp4
+    ├── thumbnails/
+    │   ├── thumbnail_1.jpg
+    │   ├── thumbnail_2.jpg
+    │   ├── thumbnail_3.jpg
+    │   ├── youtube_thumbnail.jpg
+    │   └── thumbnail_recommendations.json
+    └── project.json
+
+The selected `youtube_thumbnail.jpg` should be created when the user accepts the recommendation or according to an explicitly configured automatic-selection preference.
+
+Record the following in the recommendation JSON:
+
+- Video title.
+- Project identifier.
+- Thumbnail file paths.
+- Design descriptions.
+- Generation method.
+- Image dimensions.
+- Thumbnail language.
+- Scores and scoring criteria.
+- Recommendation.
+- Reasoning.
+- Warnings.
+- Generation timestamp.
+
+## 12.10 Thumbnail tests
+
+Add automated tests that verify:
+
+1. Three initial thumbnail options are produced after successful video generation.
+2. Each file is a valid image.
+3. Each thumbnail measures 1280 × 720.
+4. Each file is saved in the correct location.
+5. The files use a valid JPEG format.
+6. Color mode is compatible with RGB.
+7. Scoring is consistent and reproducible.
+8. The recommendation follows the implemented scoring and quality rules.
+9. Missing AI models do not crash the application.
+10. Existing assets can be used for fallback compositions.
+11. Failed thumbnail generation is reported honestly.
+12. Thumbnail regeneration does not alter the completed video.
+13. The recommendation JSON is valid.
+14. RTL text rendering is verified when the required language tools are available.
+
+Use lightweight test assets for automated tests.
+
+Also create and visually inspect real thumbnails from a test video.
+
+---
+
+# 13. VIDEO RESOLUTION AND EXPORT
+
+Support the following output options.
+
+## Standard Full HD
+
+- Resolution: 1920 × 1080.
+- Aspect ratio: 16:9.
+
+## 4K
+
+- Resolution: 3840 × 2160.
+- Aspect ratio: 16:9.
+
+Use FFmpeg for encoding and FFprobe for media validation.
+
+Provide appropriate codecs and containers, such as H.264 video with AAC audio in an MP4 container, where supported.
+
+Distinguish between:
+
+- Native 4K content.
+- 1080p content resized or upscaled to 4K.
+- AI-generated content at another resolution.
+
+Upscaling a 1080p video to 4K does not create genuine native 4K detail.
+
+Clearly label the export method.
+
+Do not claim native 4K generation when the underlying content was only upscaled.
+
+Validate:
+
+- Resolution.
+- Frame rate.
+- Duration.
+- Video codec.
+- Audio codec.
+- Audio stream presence when required.
+- File integrity.
+- Aspect ratio.
+
+Use sensible defaults that work on limited hardware.
+
+---
+
+# 14. LOW-RESOURCE WINDOWS SUPPORT
+
+The application must run on a Windows laptop with limited resources.
+
+Inspect the actual machine and project environment before choosing defaults.
+
+Provide a low-resource mode that:
+
+- Uses reasonable render settings.
+- Avoids unnecessary simultaneous tasks.
+- Limits memory-intensive operations.
+- Reuses cached assets.
+- Reuses completed scene renders.
+- Avoids unnecessary model loading.
+- Uses CPU-compatible methods when available.
+- Warns before launching resource-intensive operations.
+
+Do not assume that CUDA or a dedicated GPU is available.
+
+Do not require 4K rendering when the hardware cannot handle it efficiently.
+
+Allow the user to select a lower-resolution preview before final export.
+
+Provide realistic estimates based on measured performance where possible.
+
+Do not promise that a 45-minute video will render in under one hour without testing the actual workflow.
+
+Measure performance and report the results.
+
+---
+
+# 15. PROJECT SAVING AND RESUMABILITY
+
+Save project information to persistent files.
+
+Maintain a clear record of:
+
+- Configuration.
+- Topic.
+- Script.
+- Language selections.
+- Duration.
+- Scene manifest.
+- Generated assets.
+- Narration.
+- Subtitles.
+- Music.
+- Render settings.
+- Thumbnail options.
+- Thumbnail recommendation.
+- Completed stages.
+- Errors and warnings.
+
+Support resuming interrupted projects.
+
+If a thumbnail fails, the user should be able to retry thumbnail generation without repeating script creation, narration, scene generation, or video rendering.
+
+If one scene fails, retry that scene where practical.
+
+Cache reusable assets.
+
+Never mark a stage complete unless its outputs have been verified.
+
+---
+
+# 16. COMMAND-LINE EXPERIENCE
+
+Preserve the current CLI architecture and improve it as necessary.
+
+Provide clear commands for:
+
+- Showing help.
+- Checking system requirements.
+- Selecting project settings.
+- Creating a video from a topic.
+- Creating a video from a script.
+- Resuming a project.
+- Regenerating a failed scene.
+- Regenerating thumbnails.
+- Selecting a thumbnail.
+- Checking an existing output.
+- Viewing project status.
+
+Use actual command names supported by the codebase. Do not document commands that have not been implemented.
+
+Provide understandable error messages and useful next steps.
+
+The application should explain missing dependencies, unsupported voices, unavailable models, and insufficient disk space.
+
+---
+
+# 17. AUTOMATIC QUALITY CONTROL
+
+Before reporting success, verify the generated outputs.
+
+For a completed video:
+
+- Check that the MP4 exists.
+- Confirm that its size is nonzero.
+- Probe its actual media streams with FFprobe.
+- Validate the actual resolution.
+- Validate the actual duration.
+- Validate audio availability.
+- Confirm that subtitles are generated when requested.
+- Confirm that required project files exist.
+- Check that the video can be decoded.
+- Inspect representative frames when practical.
+
+For the thumbnails:
+
+- Confirm that exactly three initial options exist.
+- Validate all image files.
+- Validate dimensions.
+- Inspect the compositions.
+- Inspect text rendering.
+- Validate the recommendation report.
+- Confirm that the selected thumbnail matches the recommendation or the user's choice.
+
+Never rely solely on successful process exit codes when validating media files.
+
+---
+
+# 18. TESTING REQUIREMENTS
+
+Preserve the existing test suite.
+
+Add tests for all newly implemented functionality.
+
+Test:
+
+- Duration presets.
+- Custom duration handling.
+- Language configuration.
+- Script parsing.
+- Scene planning.
+- TTS voice detection.
+- Unsupported language behavior.
+- Subtitle timing.
+- Urdu and Arabic rendering.
+- FFmpeg integration.
+- FFprobe validation.
+- 1080p output.
+- 4K output settings.
+- Project resumption.
+- Failed-scene retries.
+- Asset caching.
+- Thumbnail generation.
+- Thumbnail recommendation.
+- Thumbnail selection.
+- Thumbnail regeneration.
+- Error handling.
+
+Use mocks for unit tests when appropriate, but do not substitute mocked tests for end-to-end verification.
+
+Generate a real short test video.
+
+Generate all three thumbnails for the test video.
+
+Inspect the resulting MP4 and images.
+
+Record actual test results.
+
+Do not claim a feature has been tested if it has only been reviewed in source code.
+
+---
+
+# 19. DOCUMENTATION
+
+Update the README and relevant documentation.
+
+Explain:
+
+- What the software does.
+- What it cannot do.
+- Installation on Windows.
+- Required dependencies.
+- Optional dependencies.
+- How to run the system diagnostic.
+- How to create a video.
+- How to use an existing script.
+- How to select languages.
+- How to select video duration.
+- How to use narration.
+- How to export at 1080p or 4K.
+- How to generate and select thumbnails.
+- How the thumbnail recommendation works.
+- How to resume a failed project.
+- How to troubleshoot common problems.
+
+Clearly identify which capabilities require optional local AI models.
+
+Do not claim that the application provides unlimited AI-generated video footage when it only generates procedural animations or animated still images.
+
+---
+
+# 20. IMPLEMENTATION WORKFLOW
+
+Follow these steps in order.
+
+### Phase 1: Inspect
+
+1. Inspect the repository structure.
+2. Read the project instructions.
+3. Review the existing Python modules.
+4. Review dependencies and configuration.
+5. Inspect existing tests.
+6. Run the current tests.
+7. Run the existing diagnostic command.
+8. Identify implemented features, incomplete features, and bugs.
+
+Do not overwrite working functionality without a clear reason.
+
+### Phase 2: Verify existing features
+
+Check the existing implementation of:
+
+- Duration handling.
+- Language settings.
+- Script processing.
+- Scene planning.
+- Visual generation.
+- Narration.
+- Subtitles.
+- Audio mixing.
+- Video rendering.
+- 1080p export.
+- 4K export.
+- Project resumption.
+- Error handling.
+
+Fix incorrect behavior rather than merely adding new configuration fields.
+
+### Phase 3: Complete missing video functionality
+
+Implement the highest-priority missing features using the existing architecture.
+
+Preserve compatibility with Windows and the current environment.
+
+### Phase 4: Implement thumbnail generation
+
+Integrate the complete three-thumbnail workflow into normal video production.
+
+Implement thumbnail generation, scoring, recommendation, selection, persistence, and regeneration.
+
+Ensure thumbnail failures do not destroy an otherwise successful video project.
+
+### Phase 5: Test
+
+Run:
+
+- Unit tests.
+- Integration tests.
+- Existing regression tests.
+- End-to-end tests.
+- A real short video-generation workflow.
+- Thumbnail generation and validation.
+- Actual output inspection.
+
+### Phase 6: Fix and verify
+
+Fix failures found during testing.
+
+Rerun affected tests.
+
+Do not stop after identifying a bug if it can reasonably be fixed within the task.
+
+### Phase 7: Final report
+
+Provide a concise but specific report containing:
+
+1. Features implemented.
+2. Features verified as working.
+3. Features still incomplete.
+4. Test results.
+5. Actual video output paths.
+6. Actual thumbnail output paths.
+7. Recommended thumbnail and its reasoning.
+8. Whether 4K was actually tested.
+9. Which narration languages were tested.
+10. Whether Urdu and Arabic rendering was inspected.
+11. Whether genuine AI image or video generation is available.
+12. Hardware or performance limitations.
+13. Exact commands for running the application.
+
+Separate verified facts from assumptions.
+
+---
+
+# 21. IMPORTANT ENGINEERING RULES
+
+- Work in the existing repository.
+- Do not rebuild the application from scratch.
+- Do not remove working features unnecessarily.
+- Do not create fake implementations.
+- Do not leave critical functionality as TODOs.
+- Do not claim tests passed without running them.
+- Do not claim AI-generated visuals when using procedural animation.
+- Do not claim native 4K when merely upscaling.
+- Do not use an unrelated voice for an unsupported language.
+- Do not silently replace the user's script.
+- Do not automatically download large models.
+- Do not introduce mandatory paid services.
+- Do not sacrifice existing functionality to implement thumbnails.
+- Do not overwrite the user's selected thumbnail without confirmation.
+- Do not fabricate thumbnail-performance predictions.
+- Do not hide limitations or failures.
+- Prefer maintainable, modular, documented code.
+- Keep all generated outputs organized by project.
+- Use real verification rather than assumptions.
+
+# FINAL OBJECTIVE
+
+Deliver a working FreeAnimate AI application that can transform a topic or supplied script into a complete video project with narration when supported, subtitles, appropriate visuals, animation, optional music, and validated video output.
+
+**Every successfully completed video-generation workflow must also produce three distinct YouTube thumbnails, evaluate them, recommend the strongest suitable option, explain the recommendation, and allow the user to select or regenerate a thumbnail without rendering the entire video again.**
+
+The application must be honest about which functions are genuinely AI-powered, which use local models, which use procedural techniques, and which remain limited by the user's hardware.
+
+Start by inspecting the existing project and implementing the next highest-priority missing functionality. Continue through testing and validation before presenting your final report.
