@@ -1036,6 +1036,337 @@ def cmd_languages(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 # Parser
 # ---------------------------------------------------------------------------
+def cmd_serve(args: argparse.Namespace) -> int:
+    """Start the local browser studio (127.0.0.1 by default)."""
+    import threading
+    import webbrowser
+
+    import uvicorn
+
+    from .web import create_app
+
+    cfg_path = Path(args.config) if args.config else CONFIG_PATH
+    app = create_app(cfg_path)
+    url = f"http://{args.host}:{args.port}/"
+    out(f"{APP_NAME} Studio serving at {url}")
+    out("Press Ctrl+C to stop. The server is bound to localhost unless you override --host.")
+    if args.open:
+        threading.Timer(1.2, lambda: webbrowser.open(url)).start()
+    uvicorn.run(app, host=args.host, port=args.port, log_level=args.log_level)
+    return 0
+
+
+def cmd_hardware(args: argparse.Namespace) -> int:
+    from .blender3d import find_blender
+    from .hardware import detect_hardware, model_suggestions
+
+    cfg = Config.load(Path(args.config) if args.config else CONFIG_PATH)
+    root = Path(cfg.data["paths"].get("projects_dir", "projects"))
+    hw = detect_hardware(root)
+    blender = find_blender()
+    if args.json:
+        out(json.dumps({"report": hw.to_dict(), "blender": blender.to_dict(),
+                        "suggestions": model_suggestions(hw)}, ensure_ascii=False, indent=2))
+        return 0
+    for line in hw.summary_lines():
+        out(line)
+    out("\nCapabilities:")
+    for name, cap in hw.capabilities.items():
+        out(f"  {name:26s} {cap.status:18s} {cap.detail}")
+    blender = find_blender()
+    out(f"\nBlender: {'available - ' + (blender.version or blender.executable or '') if blender.available else 'not installed'}")
+    if args.json:
+        out(json.dumps({"report": hw.to_dict(), "blender": blender.to_dict(),
+                        "suggestions": model_suggestions(hw)}, ensure_ascii=False, indent=2))
+    else:
+        out("\nModel suggestions (nothing downloaded automatically):")
+        for s in model_suggestions(hw):
+            out(f"  {s['task']:5s} {s['family']} — ~{s['approx_download_gb']} GB, "
+                f"min RAM {s['min_ram_gb']} GB, VRAM {s['recommended_vram_gb']} GB")
+    return 0
+
+
+def cmd_models(args: argparse.Namespace) -> int:
+    from .local_models import (MODEL_REGISTRY, check_image_backend, check_video_backend,
+                               download_model, plan_download, registry)
+
+    image = check_image_backend()
+    video = check_video_backend()
+    if args.model_id:
+        model = next((m for m in MODEL_REGISTRY if m.id == args.model_id), None)
+        if model is None:
+            out(f"Unknown model {args.model_id!r}. Known: {', '.join(m.id for m in MODEL_REGISTRY)}")
+            return 2
+        plan = plan_download(model)
+        out(f"{model.family} ({model.id})")
+        out(f"  repo:      {plan.repo_id}")
+        out(f"  approx:    {plan.approx_gb} GB")
+        out(f"  target:    {plan.target_dir}")
+        out(f"  license:   {plan.license_note}")
+        out(f"  {plan.note}")
+        if args.download:
+            if not args.yes:
+                out("Refusing to download without --yes (verify the license and disk space first).")
+                return 2
+            out("Downloading… this can take a long time.")
+            download_model(model, confirm=True)
+            out("Download complete.")
+        return 0
+    out(f"Image backend: {image.backend or 'none'} - {'available' if image.available else 'unavailable'}")
+    out(f"  {image.detail}")
+    out(f"Video backend: {video.backend or 'none'} - {'available' if video.available else 'unavailable'}")
+    out(f"  {video.detail}")
+    out("\nRegistry:")
+    for m in registry(args.task):
+        out(f"  {m.id:14s} {m.task:5s} ~{m.approx_download_gb:4.1f} GB  RAM {m.min_ram_gb:>2} GB  "
+            f"VRAM {m.recommended_vram_gb:>2} GB  {m.family}")
+    out("\nUse 'freeanimate models <id> --download --yes' after checking the license.")
+    return 0
+
+
+def cmd_understand(args: argparse.Namespace) -> int:
+    from .hardware import detect_hardware
+    from .prompt_understanding import plan_to_dict, understand_prompt
+
+    prompt = args.prompt or " ".join(args.text or [])
+    if not prompt.strip():
+        out("Provide a prompt: freeanimate understand \"two characters chat in a garden\"")
+        return 2
+    cfg = Config.load(Path(args.config) if args.config else CONFIG_PATH)
+    hw = detect_hardware(Path(cfg.data["paths"].get("projects_dir", "projects")))
+    caps = {k: (c.status == "available") for k, c in hw.capabilities.items()}
+    plan = understand_prompt(prompt, available=caps,
+                             default_duration=args.duration or 30.0)
+    if args.json:
+        out(json.dumps(plan_to_dict(plan), ensure_ascii=False, indent=2))
+        return 0
+    out(f"Title:            {plan.title}")
+    out(f"Type:             {plan.project_type}")
+    out(f"Requested method: {plan.requested_method}")
+    out(f"Will run:         {plan.supported_method}")
+    out(f"Why:              {plan.method_note}")
+    out(f"Environment:      {plan.environment_type} ({plan.setting}) / {plan.time_of_day}")
+    out(f"Duration:         {plan.duration_seconds:.1f}s / {plan.aspect_ratio}")
+    out("Characters:")
+    for c in plan.characters:
+        out(f"  - {c.name} [{c.id}] {c.species}: {c.description} {c.clothing}".rstrip())
+    out("Dialogue:")
+    for d in plan.dialogue:
+        out(f"  {d.speaker} [{d.emotion}]: {d.text}  ({d.source})")
+    if plan.warnings:
+        out("Warnings:")
+        for w in plan.warnings:
+            out(f"  - {w}")
+    return 0
+
+
+def cmd_make(args: argparse.Namespace) -> int:
+    """Create a real conversation/animated video straight from a prompt."""
+    from .studio import Studio, StudioOptions
+
+    cfg = Config.load(Path(args.config) if args.config else CONFIG_PATH)
+    studio = Studio(cfg, projects_root=Path(args.projects_dir) if args.projects_dir else None)
+    if args.dialogue_file:
+        from .conversation import parse_dialogue_text
+        plan, _ = studio.plan(args.prompt)
+        text = Path(args.dialogue_file).read_text(encoding="utf-8")
+        dialogue = parse_dialogue_text(text, plan.characters)
+    else:
+        dialogue = None
+    opts = StudioOptions(
+        title=args.name, method=args.method, resolution=args.resolution, fps=args.fps,
+        language=args.language, music=args.music, burn_subtitles=not args.no_burn_subtitles,
+        duration_seconds=(args.duration * 60.0) if args.duration else None,
+        dialogue=dialogue, image_model=getattr(args, "image_model", None),
+    )
+    last = [0.0]
+
+    def progress(stage: str, frac: float, message: str | None) -> None:
+        now = time.time()
+        if now - last[0] > 0.4 or frac >= 1.0:
+            last[0] = now
+            out(f"  [{frac * 100:5.1f}%] {stage:12s} {message or ''}")
+
+    out(f"Creating: {args.prompt}")
+    result = studio.run(args.prompt, opts, progress=progress)
+    if not result.ok:
+        out(f"\nFailed: {result.error}")
+        return 1
+    out(f"\nVideo:   {result.output}")
+    out(f"Method:  {result.method} ({result.duration:.1f}s, {result.scene_count} scene(s))")
+    out(f"Project: {result.project.root if result.project else ''}")
+    for limitation in result.limitations:
+        out(f"  note: {limitation}")
+    return 0
+
+
+def cmd_image(args: argparse.Namespace) -> int:
+    """Generate one real image with a locally installed open-weight model."""
+    from .local_models import (check_image_backend, default_image_model_id,
+                               generate_image_diffusers)
+
+    backend = check_image_backend(args.model)
+    if not backend.available:
+        out(f"Image backend unavailable: {backend.detail}")
+        return 1
+    model = args.model or default_image_model_id()
+    out(f"Model: {model}")
+    out(f"Backend: {backend.backend} - {backend.detail}")
+    out(f"Prompt: {args.prompt}")
+    out("Generating locally; this can take several minutes on CPU...")
+    result = generate_image_diffusers(
+        args.prompt, Path(args.out), model_id=model,
+        negative_prompt=args.negative, width=args.width, height=args.height,
+        steps=args.steps, seed=args.seed,
+    )
+    if not result.ok:
+        out(f"Failed: {result.error}")
+        return 1
+    out(f"Saved: {result.path}")
+    if result.detail:
+        out(f"Details: {json.dumps(result.detail, ensure_ascii=False)}")
+    return 0
+
+
+def _film_options(args: argparse.Namespace):
+    from .film import FilmOptions
+    return FilmOptions(
+        title=getattr(args, "name", None),
+        duration_minutes=getattr(args, "duration", None) or 15.0,
+        quality=getattr(args, "quality", "balanced"),
+        resolution=getattr(args, "resolution", None),
+        fps=getattr(args, "fps", 24),
+        language=getattr(args, "language", "en"),
+        script_path=getattr(args, "script", None),
+        music=getattr(args, "music", "none"),
+        burn_subtitles=not getattr(args, "no_burn_subtitles", False),
+        seed=getattr(args, "seed", "") or "",
+        preview_seconds=getattr(args, "preview_seconds", 45.0) or 45.0,
+    )
+
+
+def cmd_film(args: argparse.Namespace) -> int:
+    """Plan / preview / render / resume / status / validate a long film."""
+    from .film import FilmStudio, FILM_QUALITY_PRESETS
+
+    cfg = Config.load(Path(args.config) if args.config else CONFIG_PATH)
+    studio = FilmStudio(cfg, projects_root=Path(args.projects_dir) if args.projects_dir else None)
+    opts = _film_options(args)
+    action = args.action
+
+    if action == "plan":
+        if not args.prompt:
+            out("Provide a story prompt with --prompt \"...\" (or a script file with --script).")
+            return 2
+        plan = studio.build_plan(args.prompt, opts)
+        project = studio.create_project(args.prompt, plan, opts)
+        out("")
+        out(f"Film plan: {plan.title}")
+        out(f"Project:   {project.manifest['slug']}   ({project.root})")
+        out(f"Target:    {plan.target_minutes:g} min  "
+            f"(planned narration ~{plan.estimated_seconds / 60:.1f} min at {plan.wpm} wpm)")
+        out(f"Scenes:    {plan.scene_count}   Quality preset: {plan.quality}")
+        out(f"Cast:      " + ", ".join(f"{c.name} ({c.age_group})" for c in plan.characters))
+        out("")
+        for scene in plan.scenes[:24]:
+            acts = ", ".join(dict.fromkeys(a.get("action", "") for a in scene.actions)) or "-"
+            props = ", ".join(dict.fromkeys(p.get("kind", "") for p in scene.props)) or "-"
+            out(f"  [{scene.index + 1:02d}] {scene.title[:52]:52s} {scene.environment:12s} "
+                f"{len(scene.lines)} line(s)  act: {acts[:28]:28s} props: {props[:18]}")
+        if plan.scene_count > 24:
+            out(f"  ... {plan.scene_count - 24} more scene(s)")
+        for note in plan.notes:
+            out(f"  note: {note}")
+        for warning in plan.warnings:
+            out(f"  warn: {warning}")
+        out("")
+        out(f"Next:  freeanimate film preview {project.manifest['slug']}")
+        out(f"       freeanimate film render  {project.manifest['slug']}")
+        return 0
+
+    if action in ("preview", "render", "resume", "status", "validate"):
+        if not args.project and not (action == "render" and args.prompt):
+            out(f"'{action}' needs a project: freeanimate film {action} <project>")
+            return 2
+
+    def progress(stage: str, frac: float, message: str | None) -> None:
+        out(f"  [{frac * 100:5.1f}%] {stage:12s} {message or ''}")
+
+    if action == "preview":
+        result = studio.preview(args.project, opts, progress=progress)
+        if not result.ok:
+            out(f"\nPreview failed: {result.error}")
+            return 1
+        out(f"\nPreview: {result.output}")
+        if result.perception:
+            est = result.perception
+            out(f"Estimated full render: ~{est['estimated_full_render_minutes']} min "
+                f"({est['measured_fps']} fps measured on this machine — an estimate).")
+        for note in result.notes:
+            out(f"  note: {note}")
+        return 0
+
+    if action in ("render", "resume"):
+        result = studio.run(args.prompt, opts, project_ref=args.project,
+                            resume=True, progress=progress)
+        if not result.ok:
+            out(f"\nRender failed: {result.error}")
+            out("Completed scenes are saved; re-run 'freeanimate film resume <project>' "
+                "to continue.")
+            return 1
+        out(f"\nFilm:    {result.output}")
+        out(f"Duration: {result.duration:.1f}s in {result.scene_count} scene(s)")
+        out(f"Project: {result.project.root if result.project else ''}")
+        for limitation in result.limitations:
+            out(f"  note: {limitation}")
+        for warning in result.warnings:
+            out(f"  warn: {warning}")
+        return 0
+
+    if action == "status":
+        info = studio.status(args.project)
+        if args.json:
+            out(json.dumps(info, ensure_ascii=False, indent=2))
+            return 0
+        out("")
+        out(f"Film:      {info['title']}")
+        out(f"Project:   {info['project']}")
+        out(f"Target:    {info['target_minutes']:g} min (planned ~{info['planned_seconds'] / 60:.1f} min)")
+        out(f"Scenes:    {info['scenes_done']}/{info['scene_count']} rendered   "
+            f"stage: {info['stage']}")
+        out(f"Final mp4: {'yes' if info['final_exists'] else 'no'}  ({info['output']})")
+        for scene in info["scenes"]:
+            out(f"  [{scene['index']:02d}] {scene['status']:9s} {scene['title'][:46]:46s} "
+                f"{scene['environment']:12s} {scene['lines']}L {scene['actions']}A {scene['props']}P")
+        return 0
+
+    if action == "validate":
+        data = studio.validate(args.project)
+        if args.json:
+            out(json.dumps(data, ensure_ascii=False, indent=2, default=str))
+            return 0
+        validation = data["validation"]
+        out(f"Validation: {'PASS' if validation.get('ok') else 'FAIL'} "
+            f"({validation.get('actual_duration')}s, {validation.get('resolution')}, "
+            f"{validation.get('frame_rate')} fps)")
+        for check in validation.get("checks", []):
+            if not check.get("ok"):
+                out(f"  FAIL {check.get('name')}: {check.get('detail')}")
+        qa = data.get("qa") or {}
+        out("")
+        out(f"QA overall: {'PASS' if qa.get('ok') else 'FAIL'}")
+        for check in qa.get("failures", []):
+            out(f"  FAIL {check['name']}: {check['detail']}")
+        for check in qa.get("warnings", []):
+            out(f"  warn {check['name']}: {check['detail']}")
+        if qa.get("contact_sheet"):
+            out(f"Contact sheet: {qa['contact_sheet']}")
+        return 0 if validation.get("ok") else 1
+
+    out(f"Unknown film action: {action}")
+    return 2
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="freeanimate",
@@ -1043,6 +1374,98 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--version", action="version", version=f"{APP_NAME} {APP_VERSION}")
     sub = parser.add_subparsers(dest="command", help="commands")
+
+    # serve — the browser studio
+    sv = sub.add_parser("serve", help="start the local browser studio (127.0.0.1)")
+    sv.add_argument("--host", default="127.0.0.1", help="bind address (default: localhost only)")
+    sv.add_argument("--port", type=int, default=8000, help="port (default 8000)")
+    sv.add_argument("--config", help="path to config.json")
+    sv.add_argument("--open", action="store_true", help="open a browser window")
+    sv.add_argument("--log-level", default="info", choices=["critical", "error", "warning", "info", "debug"])
+    sv.set_defaults(func=cmd_serve)
+
+    # make — the new conversation/animation studio, non-interactive
+    mk = sub.add_parser("make", help="create a real conversation/animation video from a prompt")
+    mk.add_argument("prompt", help="what to create")
+    mk.add_argument("--name", help="project title")
+    mk.add_argument("--method", choices=[
+        "auto", "2d", "3d", "3d_cartoon", "realistic", "realistic_3d", "cinematic",
+        "photoreal", "still_image", "ai_image", "ai_video", "educational",
+        "children"], default="auto")
+    mk.add_argument("--resolution", choices=["480p", "720p", "1080p"], default="720p")
+    mk.add_argument("--fps", type=int, choices=[24, 25, 30], default=24)
+    mk.add_argument("--language", default="en", help="voice/subtitle language code")
+    mk.add_argument("--music", choices=["none", "procedural"], default="none")
+    mk.add_argument("--duration", type=float, help="target duration in minutes (actual follows measured speech)")
+    mk.add_argument("--dialogue-file", help="optional 'Name: [emotion] line' dialogue file")
+    mk.add_argument("--no-burn-subtitles", action="store_true")
+    mk.add_argument("--projects-dir", help="override projects directory")
+    mk.add_argument("--config", help="path to config.json")
+    mk.add_argument("--image-model", help="installed local image model id/path for --method ai_image")
+    mk.set_defaults(func=cmd_make)
+
+    # film — long-video mode (5-25 min) with resumable scene rendering
+    fm = sub.add_parser(
+        "film",
+        help="plan and render a 5-25 minute animated film (resumable, scene by scene)")
+    fm.add_argument("action",
+                    choices=["plan", "preview", "render", "resume", "status", "validate"],
+                    help="plan|preview|render|resume|status|validate")
+    fm.add_argument("project", nargs="?",
+                    help="project slug/path (preview/render/resume/status/validate)")
+    fm.add_argument("--prompt", "-p", help="story prompt (required for 'plan')")
+    fm.add_argument("--name", help="project title")
+    fm.add_argument("--duration", "-d", type=float,
+                    help="target minutes: 5 minimum, 15 default, 25 maximum")
+    fm.add_argument("--quality", choices=["pc_friendly", "balanced", "high"],
+                    default="balanced",
+                    help="quality preset (pc_friendly=480p, balanced=720p, high=1080p)")
+    fm.add_argument("--resolution", choices=["480p", "720p", "1080p"],
+                    help="override the preset resolution")
+    fm.add_argument("--fps", type=int, choices=[24, 25, 30], default=24)
+    fm.add_argument("--language", default="en", help="voice/subtitle language code")
+    fm.add_argument("--script", help="script file (paragraphs; lines starting with # are titles)")
+    fm.add_argument("--music", choices=["none", "procedural"], default="none")
+    fm.add_argument("--no-burn-subtitles", action="store_true")
+    fm.add_argument("--preview-seconds", type=float, default=45.0,
+                    help="preview length in seconds (default 45)")
+    fm.add_argument("--seed", default="", help="deterministic visual seed")
+    fm.add_argument("--projects-dir", help="override projects directory")
+    fm.add_argument("--config", help="path to config.json")
+    fm.add_argument("--json", action="store_true", help="emit JSON (status/validate)")
+    fm.set_defaults(func=cmd_film)
+
+    # hardware / models / understand
+    hw = sub.add_parser("hardware", help="show measured hardware and honest capabilities")
+    hw.add_argument("--json", action="store_true", help="emit JSON")
+    hw.add_argument("--config", help="path to config.json")
+    hw.set_defaults(func=cmd_hardware)
+
+    md = sub.add_parser("models", help="list local AI backends and model download plans")
+    md.add_argument("model_id", nargs="?", help="show a specific model's download plan")
+    md.add_argument("--task", choices=["image", "video"], help="filter the registry")
+    md.add_argument("--download", action="store_true", help="download the named model (requires --yes)")
+    md.add_argument("--yes", "-y", action="store_true", help="confirm the download")
+    md.set_defaults(func=cmd_models)
+
+    img = sub.add_parser("image", help="generate an image with a local open-weight model")
+    img.add_argument("prompt", help="image prompt")
+    img.add_argument("--out", default="generated/image.png", help="output PNG path")
+    img.add_argument("--model", help="installed model id or local diffusers directory")
+    img.add_argument("--negative", default="", help="negative prompt (non-turbo models)")
+    img.add_argument("--width", type=int, default=512)
+    img.add_argument("--height", type=int, default=512)
+    img.add_argument("--steps", type=int, help="inference steps (default depends on model)")
+    img.add_argument("--seed", type=int)
+    img.set_defaults(func=cmd_image)
+
+    un = sub.add_parser("understand", help="parse a prompt into an honest production plan")
+    un.add_argument("prompt", nargs="?", help="prompt text")
+    un.add_argument("--text", nargs="*", help="prompt words (alternative to positional)")
+    un.add_argument("--duration", type=float, help="default duration in seconds")
+    un.add_argument("--json", action="store_true")
+    un.add_argument("--config", help="path to config.json")
+    un.set_defaults(func=cmd_understand)
 
     # create
     c = sub.add_parser("create", help="create a new video project (interactive by default)")

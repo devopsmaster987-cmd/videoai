@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Characters</h1>
+<p class="lead">Character designs are stored with their projects so appearances stay consistent. Portraits below are procedurally drawn artwork, not AI generations.</p>
+{% if characters %}
+<div class="grid cols-3">
+  {% for c in characters %}
+  <article class="card char-card">
+    {% if c.portrait %}<img class="portrait" src="{{ c.portrait }}" alt="Portrait of {{ c.name }}" loading="lazy">{% endif %}
+    <div class="spread"><h3 style="margin:0">{{ c.name }}</h3><span class="badge">{{ c.species }}</span></div>
+    <p class="small muted" style="margin:0">{{ c.clothing }}</p>
+    {% if c.personality %}<p class="small" style="margin:0">{{ c.personality }}</p>{% endif %}
+    <div class="pill-list">
+      {% for col in c.palette %}<span class="badge" style="background:{{ col }};color:#111">{{ col }}</span>{% endfor %}
+    </div>
+    <a class="small" href="/projects/{{ c.project }}">Project: {{ c.project }}</a>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><p class="muted">No characters yet. <a href="/new">Create a project</a> to design some.</p></div>
+{% endif %}
+{% endblock %}

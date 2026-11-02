@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} · FreeAnimate Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">FreeAnimate <span>Studio</span></a>
+    <nav aria-label="Main">
+      <a href="/new">New video</a>
+      <a href="/characters">Characters</a>
+      <a href="/hardware">Hardware</a>
+      <a href="/models">Models</a>
+      <a href="/images">Image lab</a>
+      <a href="/settings">Settings</a>
+      <a href="/api/docs">API</a>
+    </nav>
+  </header>
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <p>Runs locally on 127.0.0.1. Procedural 2D/3D output is labelled honestly; nothing is uploaded and no model is downloaded automatically.</p>
+  </footer>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

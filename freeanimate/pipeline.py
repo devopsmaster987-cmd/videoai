@@ -98,6 +98,7 @@ class PipelineOptions:
     subtitle_shadow: int = 1
     subtitle_max_chars: int = 46
     subtitle_max_lines: int = 2
+    background_image: Path | None = None
 
     @classmethod
     def from_config(cls, cfg: Config, **overrides: Any) -> "PipelineOptions":
@@ -684,7 +685,11 @@ class Pipeline:
                 segments.append(seg)
                 continue
             img = Path(scene.assets.get("image", ""))
-            if not img.exists():
+            if self.opts.background_image and Path(self.opts.background_image).exists():
+                img = Path(self.opts.background_image)
+                scene.assets["image"] = str(img)
+                scene.animation_method = "ai_still_image_story"
+            elif not img.exists():
                 # Try regenerating.
                 res = generate_scene_asset(scene, self.project.stage_dir("assets"),
                                            width=w, height=h, fps=self.opts.fps,

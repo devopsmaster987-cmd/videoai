@@ -490,6 +490,38 @@ def pick_engine(preferred: str = "auto", *, language: str | None = None,
     return SilenceEngine(cfg)
 
 
+def engine_by_name(name: str, config: dict[str, Any] | None = None) -> TTSEngine:
+    """Return an engine instance by name (public wrapper over the registry)."""
+    cls = _ENGINE_CLASSES.get(name)
+    if cls is None:
+        raise TTSError(f"unknown TTS engine: {name}")
+    return cls(config or {})
+
+
+def available_voices(language: str | None = None, *,
+                     config: dict[str, Any] | None = None,
+                     engines: Iterable[str] = ("piper", "espeak", "sapi")) -> list[VoiceInfo]:
+    """Collect voices that are *actually installed* across engines.
+
+    Never reports a voice merely because an engine is listed; each engine is
+    probed first.  ``silence`` is never returned as a voice.
+    """
+    cfg = config or {}
+    out: list[VoiceInfo] = []
+    for name in engines:
+        cls = _ENGINE_CLASSES.get(name)
+        if cls is None:
+            continue
+        eng = cls(cfg)
+        try:
+            if not eng.probe().get("available"):
+                continue
+            out.extend(eng.list_voices(language))
+        except Exception:  # noqa: BLE001 — a broken engine must not crash the caller
+            continue
+    return out
+
+
 def synthesize_with_fallback(
     text: str,
     out_path: Path,

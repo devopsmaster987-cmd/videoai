@@ -1,6 +1,11 @@
 # Generated outputs
 projects/
 cache/
+models/
+c.txt
+d.txt
+e.txt
+
 
 # Python
 __pycache__/

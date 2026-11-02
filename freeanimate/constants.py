@@ -24,6 +24,20 @@ MIN_CUSTOM_DURATION_MIN = 1
 MAX_CUSTOM_DURATION_MIN = 90
 
 # ---------------------------------------------------------------------------
+# Long-form film mode limits — master prompt section 15
+# ---------------------------------------------------------------------------
+# Film mode is a separate production path (``freeanimate film``) with its own
+# enforced limits.  The short-video presets above are left untouched so the
+# existing ``create``/``make`` flows keep their documented behaviour.
+FILM_MIN_DURATION_MIN = 5          # minimum long-video target
+FILM_DEFAULT_DURATION_MIN = 15     # default production length
+FILM_MAX_DURATION_MIN = 25         # maximum supported duration
+FILM_PREVIEW_DEFAULT_SECONDS = 45  # representative short preview before render
+FILM_TARGET_SCENE_SECONDS = 40.0   # scene pacing target for long videos
+FILM_MAX_SCENES = 240              # hard cap so bad counts cannot explode renders
+FILM_DIALOGUE_AUDIO_SHARE = 0.35   # cap on prompt dialogue share of the runtime
+
+# ---------------------------------------------------------------------------
 # Export presets
 # ---------------------------------------------------------------------------
 RESOLUTIONS = {

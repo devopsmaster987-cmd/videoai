@@ -16,20 +16,74 @@ TTS, burn shaped subtitles, render procedural animated illustrations and motion
 graphics with FFmpeg, mix audio, validate the MP4, and produce three distinct
 YouTube thumbnail designs scored and ranked with documented heuristics.
 
-**It does not:** produce photographic or AI-generated video footage. All visuals
-are procedural art (layered gradients, silhouettes, diagrams, timelines) or
-animated still images. It does not invent statistics, dates, or citations, and
-it does not promise click-through rates — thumbnail scores are design
-assessments, not CTR predictions.
+**It also does (new studio):** parse a scene prompt into characters, setting and
+dialogue; design persistent characters; render **genuine rigged 2D character
+animation** with viseme lip-sync, blinking, gestures and camera movement; assign
+distinct installed local voices per speaker; render a **real Blender 3D scene**
+with armature-rigged characters, layered props and multi-shot camera when
+Blender is installed; and generate images with a local **Tiny SD** model (Image
+lab, CLI, and AI scene backgrounds). A local browser UI drives all of
+it, including per-scene previews and partial scene re-renders, a validated
+settings page, ZIP export bundles and live job progress. See
+[docs/REAL_CAPABILITIES.md](docs/REAL_CAPABILITIES.md).
+
+**It does not:** produce photographic or neural AI-generated video footage by
+default. All default visuals are procedural art (rigged characters, layered
+backgrounds, diagrams, timelines). Local open-weight AI models can be used only
+if you install a compatible runtime and a licensed checkpoint yourself; the app
+never downloads models automatically and never labels procedural output as AI.
+It does not invent statistics, dates, or citations, and it does not promise
+click-through rates — thumbnail scores are design assessments, not CTR
+predictions.
+
+## Studio quick start (browser)
+
+```powershell
+# Windows: one-time install, then start the local studio
+install.bat
+start.bat          # opens http://127.0.0.1:8000/ automatically
+
+# or manually
+python -m freeanimate.cli serve --open
+```
+
+Create a conversation video from the terminal without the browser:
+
+```powershell
+python -m freeanimate.cli make "Two cartoon characters sit at a wooden table in a sunlit garden. One tells a funny story, the other listens, laughs and responds. Include flowers, trees and a fountain." --resolution 720p --music procedural
+```
+
+Useful rendering modes for `make` / the browser **Method** selector:
+
+| Mode | What runs |
+|---|---|
+| `auto` | Best genuinely available mode |
+| `2d` | Rigged 2D character animation |
+| `3d` / `3d_cartoon` | Blender armature-rigged 3D cartoon |
+| `realistic_3d` / `realistic` | Blender realistic-proportion 3D humans (not neural video) |
+| `cinematic` / `photoreal` / `still_image` | Local AI still image with procedural camera motion; not AI video |
+| `educational` / `children` | Readable rigged 2D pacing |
+| `ai_image` | Local Tiny SD background, then 2D animation |
+| `ai_video` | Only if a genuine local video backend exists; otherwise reported and downgraded |
+
+Inspect the machine and optional model plans honestly:
+
+```powershell
+python -m freeanimate.cli hardware
+python -m freeanimate.cli models
+python -m freeanimate.cli understand "two characters chat in a cafe at night"
+```
 
 ### Optional local AI models
 
-No shipped capability currently requires an optional AI model. The
-`ai_video` animation mode is accepted by the configuration but **falls back to
-hybrid procedural rendering** because no compatible free backend is bundled —
-the output is never silently labeled as AI-generated footage. TTS quality
-depends on locally installed voices (see below); everything else runs with
-Pillow, numpy, and FFmpeg only.
+No shipped capability requires an optional AI model. `ai_image` uses your local
+Tiny SD installation when present. `ai_video` is accepted but has no practical
+backend on 8 GB / no-CUDA hardware, so it is reported and downgraded to real 2D
+animation — the output is never silently labeled as AI-generated footage. True
+AI video needs a supported GPU runtime and a licensed model. TTS quality depends
+on locally installed voices (see below). Measured speed, practical durations and
+quality limits are in
+[docs/HARDWARE_AND_RENDERING_LIMITS.md](docs/HARDWARE_AND_RENDERING_LIMITS.md).
 
 ## Installation (Windows)
 
@@ -69,6 +123,11 @@ validation report in `projects/<name>/reports/` and three thumbnails in
 
 | Command | Purpose |
 | --- | --- |
+| `serve [--open] [--port N]` | Start the local browser studio on 127.0.0.1 |
+| `make "<prompt>"` | Render a conversation/animation video without the browser |
+| `hardware [--json]` | Measured hardware + honest capability report |
+| `models [id] [--download --yes]` | Local AI backend status and consent-gated model plans |
+| `understand "<prompt>" [--json]` | Parse a prompt into a production plan |
 | `create` | Interactive or flagged end-to-end creation |
 | `plan` / `scenes` / `narration` | Inspect or run individual stages |
 | `generate` / `resume` / `export` | Render a project (resumes completed stages) |
@@ -80,6 +139,63 @@ validation report in `projects/<name>/reports/` and three thumbnails in
 | `benchmark` | Measured render throughput on this machine |
 | `languages` | 19 supported languages (editable `config/languages.json`) |
 | `clean-cache` | Remove cached frames/assets |
+
+## Long films (5–25 minutes, resumable)
+
+`film` is a separate production path for longer story videos. Durations are
+clamped honestly: minimum **5 min**, default **15 min**, maximum **25 min**
+(a 45-second `preview` renders one representative scene first). Film mode never
+claims 40-minute output under the default configuration.
+
+```powershell
+# 1. Plan: story prompt -> scenes, cast, actions, props, camera, runtime estimate
+python -m freeanimate film plan --prompt "Lily and Ben explore a magical garden where they find a glowing ball. They play, chase fireflies and watch the sunset." --duration 15 --quality balanced
+
+# 2. Preview one scene at 480p + ultrafast, with a measured full-render estimate
+python -m freeanimate film preview <project> --preview-seconds 30
+
+# 3. Render the whole film (scene-level resume; Ctrl+C is safe)
+python -m freeanimate film render <project>
+
+# 4. Continue after an interruption
+python -m freeanimate film resume <project>
+
+# 5. Inspect progress, then run validation + automated QA
+python -m freeanimate film status <project>
+python -m freeanimate film validate <project>
+```
+
+| Quality preset | Resolution | x264 | Intended use |
+|---|---|---|---|
+| `pc_friendly` | 480p | ultrafast, CRF 30 | Fast previews and low-end CPUs |
+| `balanced` (default) | 720p | veryfast, CRF 26 | Practical default on an 8 GB CPU laptop |
+| `high` | 1080p | faster, CRF 22 | Slower; still procedural 2D animation |
+
+Film planning is offline and honest:
+
+* Narrative prompts are expanded into an on-topic story script from the
+  prompt's own beats (characters, actions, props, setting), not documentary
+  filler about a single noun. Off-screen narration is voiced by an explicit
+  `Narrator`; detected characters speak short on-screen lines.
+* Names used directly before story verbs ("Lily runs", "Ben waves") are matched
+  to the cast; otherwise generic `Character N` names are kept rather than
+  guessing.
+* Scene boundaries use **measured** TTS timings, and speech pace is calibrated
+  by really synthesizing a line. The reported runtime is the estimate; the final
+  MP4 follows the actual audio.
+* Resume state lives in `film/state.json` with a fingerprint over the plan and
+  options; completed scene segments are reused.
+
+Automated QA (`qa.py`) checks scene files, measured timings, cast/assets,
+action motion, foot-sliding proxies, props, continuity, stage bounds, camera
+coverage, export readability/streams/duration, audio level, subtitle
+ordering/timing/speakers, and black/dark frames, then writes a contact sheet and
+`reports/qa_report.txt`. These are mechanical checks — they cannot prove
+artistic quality; inspect the contact sheet and the video.
+
+Measured here: a 352-second 480p film (16 scenes) rendered in about 16 minutes
+(~2.7× realtime), with 19/19 QA checks passing and one honest audio-peak
+warning. See [docs/HARDWARE_AND_RENDERING_LIMITS.md](docs/HARDWARE_AND_RENDERING_LIMITS.md).
 
 ### Useful `create` flags
 
@@ -263,7 +379,7 @@ forces a full rebuild.
 ## Development
 
 ```powershell
-python -m pytest tests/ -q     # 158 tests: unit + end-to-end render + thumbnails
+python -m pytest tests/ -q     # 207 tests: unit + end-to-end render + thumbnails + film/QA
 ```
 
 Project layout: `freeanimate/` (package), `tests/`, `config/` (editable

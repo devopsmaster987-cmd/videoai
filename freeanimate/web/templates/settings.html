@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Settings</h1>
+<p class="lead">These defaults are read from the real configuration file and validated before saving. Project paths stay read-only here so the studio cannot be pointed at arbitrary locations by accident.</p>
+
+<div class="split">
+  <div>
+    <form id="settings-form" class="card" data-source="{{ source_path }}">
+      <h2>Rendering defaults</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="set-resolution">Resolution</label>
+          <select id="set-resolution" data-setting="defaults.resolution">
+            {% for r in resolutions %}<option value="{{ r }}" {{ 'selected' if settings.defaults.resolution == r }}>{{ r }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="set-fps">Frame rate</label>
+          <select id="set-fps" data-setting="defaults.fps">
+            {% for f in frame_rates %}<option value="{{ f }}" {{ 'selected' if settings.defaults.fps == f }}>{{ f }} fps</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="set-wpm">Words per minute (timing estimate)</label>
+          <input id="set-wpm" type="number" min="60" max="260" data-setting="defaults.wpm" value="{{ settings.defaults.wpm }}">
+        </div>
+        <div class="field">
+          <label for="set-crf">H.264 CRF (lower = larger, better)</label>
+          <input id="set-crf" type="number" min="0" max="51" data-setting="render.crf" value="{{ settings.render.crf }}">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="set-music">Default background bed</label>
+          <select id="set-music" data-setting="defaults.music">
+            <option value="none" {{ 'selected' if settings.defaults.music == 'none' }}>None</option>
+            <option value="procedural" {{ 'selected' if settings.defaults.music == 'procedural' }}>Procedural ambience</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="set-music-volume">Ambience volume (0–1)</label>
+          <input id="set-music-volume" type="number" min="0" max="1" step="0.01" data-setting="defaults.music_volume" value="{{ settings.defaults.music_volume }}">
+        </div>
+      </div>
+      <div class="field">
+        <label><input id="set-burn" type="checkbox" data-setting="defaults.burn_subtitles" {{ 'checked' if settings.defaults.burn_subtitles }}> Burn subtitles into the picture</label>
+      </div>
+
+      <h2 style="margin-top:1.2rem">Voice and subtitles</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="set-tts-engine">TTS engine</label>
+          <select id="set-tts-engine" data-setting="tts.engine">
+            {% for e in tts_engines %}<option value="{{ e }}" {{ 'selected' if settings.tts.engine == e }}>{{ e }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="set-tts-speed">Voice speed</label>
+          <input id="set-tts-speed" type="number" min="0.5" max="2" step="0.05" data-setting="tts.speed" value="{{ settings.tts.speed }}">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="set-subs-chars">Subtitle characters per line</label>
+          <input id="set-subs-chars" type="number" min="20" max="80" data-setting="subtitles.max_line_chars" value="{{ settings.subtitles.max_line_chars }}">
+        </div>
+        <div class="field">
+          <label for="set-subs-lines">Subtitle lines per cue</label>
+          <input id="set-subs-lines" type="number" min="1" max="4" data-setting="subtitles.max_lines" value="{{ settings.subtitles.max_lines }}">
+        </div>
+      </div>
+      <div class="field">
+        <label for="set-sample-rate">Audio sample rate</label>
+        <select id="set-sample-rate" data-setting="render.sample_rate">
+          {% for r in [22050, 32000, 44100, 48000] %}<option value="{{ r }}" {{ 'selected' if settings.render.sample_rate == r }}>{{ r }} Hz</option>{% endfor %}
+        </select>
+      </div>
+
+      <div class="row" style="margin-top:1rem">
+        <button id="settings-submit" class="btn primary" type="submit">Save settings</button>
+        <a class="btn" href="/hardware">Hardware check</a>
+      </div>
+      <div id="settings-status" aria-live="polite" style="margin-top:.6rem"></div>
+    </form>
+  </div>
+
+  <aside>
+    <div class="card">
+      <h2>Configuration source</h2>
+      <p id="config-source" class="small mono">{{ source_path or 'not saved yet — will write config/config.json' }}</p>
+      <p class="small muted">Only the fields on this page can be changed in the browser. Model paths, network permissions and translation upload consent stay file-only by design.</p>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <h2>Project folders</h2>
+      <table>
+        <tbody>
+          <tr><th>Projects</th><td class="small mono">{{ settings.paths.projects_dir }}</td></tr>
+          <tr><th>Cache</th><td class="small mono">{{ settings.paths.cache_dir }}</td></tr>
+          <tr><th>Workers</th><td>{{ settings.workers }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <h2>Honesty rules</h2>
+      <ul class="list small">
+        <li>Invalid values are rejected; the previous configuration is kept.</li>
+        <li>Nothing is uploaded and no model is downloaded from this page.</li>
+        <li>Changing a default does not re-render existing projects.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+{% endblock %}

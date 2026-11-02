@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Hardware & capabilities</h1>
+<p class="lead">Measured, not guessed. Unavailable capabilities are reported honestly; the studio falls back to real procedural rendering rather than faking output.</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <h2>Machine</h2>
+    <table>
+      <tbody>
+        <tr><th>Profile</th><td><span class="badge ok">{{ hw.profile }}</span> {{ hw.profile_label }}</td></tr>
+        <tr><th>OS</th><td>{{ hw.os_name }} {{ hw.os_version }}</td></tr>
+        <tr><th>Python</th><td>{{ hw.python_version }}</td></tr>
+        <tr><th>CPU</th><td>{{ hw.cpu_model or 'unknown' }} · {{ hw.cpu_cores or '?' }} cores</td></tr>
+        <tr><th>RAM</th><td>{{ hw.ram_gb or '?' }} GB</td></tr>
+        <tr><th>GPU</th><td>{{ hw.gpu.name or 'none detected' }}{% if hw.gpu.vram_gb %} · {{ hw.gpu.vram_gb }} GB{% endif %}<br><span class="small muted">CUDA: {{ 'yes' if hw.gpu.cuda_available else 'no' }} · torch: {{ 'yes' if hw.gpu.torch_available else 'no' }}</span></td></tr>
+        <tr><th>Disk free</th><td>{{ hw.disk_free_gb or '?' }} GB of {{ hw.disk_total_gb or '?' }} GB</td></tr>
+        <tr><th>FFmpeg</th><td class="small mono">{{ hw.ffmpeg or 'missing' }}</td></tr>
+        <tr><th>Blender</th><td class="small mono">{{ hw.blender or 'missing' }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Blender</h2>
+    {% if blender.available %}
+      <p><span class="badge ok">available</span> <span class="small mono">{{ blender.version or blender.executable }}</span></p>
+      <p class="small muted">Genuine 3D scenes can be rendered via <span class="mono">blender --background --python</span>.</p>
+    {% else %}
+      <p><span class="badge warn">not installed</span></p>
+      <p class="small">{{ blender.error }}</p>
+    {% endif %}
+    <h3 style="margin-top:1rem">Notes</h3>
+    <ul class="list small">{% for n in hw.notes %}<li>{{ n }}</li>{% endfor %}</ul>
+  </div>
+</div>
+
+<h2 style="margin-top:1.6rem">Capabilities</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>Capability</th><th>Status</th><th>Detail</th><th>Method</th></tr></thead>
+    <tbody>
+    {% for name, cap in hw.capabilities.items() %}
+      <tr>
+        <td><b>{{ name.replace('_', ' ') }}</b></td>
+        <td><span class="badge {{ 'ok' if cap.status == 'available' else 'bad' if cap.status in ('unsupported', 'not_implemented') else 'warn' }}">{{ cap.status }}</span></td>
+        <td class="small">{{ cap.detail }}</td>
+        <td class="small mono">{{ cap.method }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2 style="margin-top:1.6rem">Model suggestions</h2>
+<p class="small muted">Suggestions only — nothing is downloaded automatically. Verify each license on its model card.</p>
+<div class="grid cols-3">
+  {% for s in suggestions %}
+  <div class="card">
+    <h3>{{ s.family }}</h3>
+    <p class="small"><span class="badge">{{ s.task }}</span> <span class="badge">{{ s.profile }}</span></p>
+    <ul class="list small">
+      <li>Download ≈ {{ s.approx_download_gb }} GB</li>
+      <li>Min RAM {{ s.min_ram_gb }} GB</li>
+      <li>Recommended VRAM {{ s.recommended_vram_gb }} GB</li>
+      <li>CPU-capable: {{ 'yes, slowly' if s.cpu_capable else 'no' }}</li>
+    </ul>
+    <p class="small muted">{{ s.note }}</p>
+    <p class="small">{{ s.license_note }}</p>
+  </div>
+  {% endfor %}
+</div>
+<div class="row" style="margin-top:1rem"><a class="btn" href="/models">Open model manager</a></div>
+{% endblock %}

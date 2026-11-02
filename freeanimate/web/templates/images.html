@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Image lab</h1>
+<p class="lead">Generate a real image locally with an installed open-weight diffusion model. Nothing is sent to a cloud service and no model is downloaded here. The saved image can be reused as a project background.</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <h3>Backend</h3>
+    <p><span class="badge {{ 'ok' if backend.available else 'warn' }}">{{ 'ready' if backend.available else 'not ready' }}</span>
+      {% if backend.backend %}<span class="badge">{{ backend.backend }}</span>{% endif %}</p>
+    <p class="small muted">{{ backend.detail }}</p>
+    <p class="small mono">Model folder: {{ models_path }}</p>
+  </div>
+  <div class="card">
+    <h3>Installed models</h3>
+    {% if models %}
+      <ul class="list small">
+      {% for m in models %}
+        <li><b>{{ m.family }}</b> &middot; {{ '%.1f'|format(m.approx_gb) }} GB<br><span class="mono">{{ m.path }}</span><br><span class="muted">{{ m.license }}</span></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p class="small muted">No diffusers model is installed. Review the model plan on the <a href="/models">Models</a> page, then install it yourself with the CLI. Nothing is downloaded automatically.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="split" style="margin-top:1rem">
+  <form id="image-form" class="card">
+    <div class="field">
+      <label for="image-prompt">Prompt</label>
+      <textarea id="image-prompt" required minlength="3" placeholder="A warm sunlit garden with flowers, a wooden table and a fountain, stylized illustration, no text"></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="image-model">Model</label>
+        <select id="image-model" {{ 'disabled' if not models else '' }}>
+          {% for m in models %}<option value="{{ m.path }}" {{ 'selected' if m.id == default_model or m.path == default_model else '' }}>{{ m.family }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="image-seed">Seed (optional)</label>
+        <input id="image-seed" type="number" placeholder="random">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="image-width">Width</label><input id="image-width" type="number" min="256" max="768" step="8" value="512"></div>
+      <div class="field"><label for="image-height">Height</label><input id="image-height" type="number" min="256" max="768" step="8" value="512"></div>
+      <div class="field"><label for="image-steps">Steps</label><input id="image-steps" type="number" min="1" max="60" placeholder="auto"></div>
+    </div>
+    <div class="field">
+      <label for="image-negative">Negative prompt (optional)</label>
+      <input id="image-negative" placeholder="blurry, text, watermark, deformed">
+    </div>
+    <div class="row">
+      <button id="image-submit" class="btn primary" type="submit" {{ 'disabled' if not backend.available else '' }}>Generate locally</button>
+      <span class="small muted">CPU generation can take minutes.</span>
+    </div>
+    <div id="image-status" aria-live="polite" style="margin-top:.8rem"></div>
+  </form>
+
+  <aside class="card">
+    <h2>Result</h2>
+    <div id="image-result"><p class="muted">No image generated yet.</p></div>
+    <div class="field" style="margin-top:.8rem">
+      <label for="image-project">Reuse as project background</label>
+      <select id="image-project">
+        <option value="">Choose a project...</option>
+        {% for p in projects %}<option value="{{ p.slug }}">{{ p.name }}</option>{% endfor %}
+      </select>
+      <div class="hint">Copies the image to that project's <span class="mono">assets/custom_background.png</span>. The next render reuses it as the background.</div>
+      <button id="image-use" class="btn" type="button" disabled>Use for project</button>
+    </div>
+    <div id="image-use-status" aria-live="polite"></div>
+  </aside>
+</div>
+{% endblock %}

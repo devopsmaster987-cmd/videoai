@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Create a video</h1>
+<p class="lead">Write what you want to see. Optionally provide dialogue as <span class="mono">Name: [emotion] line</span> — otherwise a short editable conversation is generated and clearly marked as generated.</p>
+
+<div class="split">
+  <form id="create-form" class="card" novalidate>
+    <div class="field">
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" required minlength="8" placeholder="Two friendly cartoon characters sit at a wooden table in a sunlit garden. One tells a funny story while the other listens, laughs and responds. Include flowers, trees and a fountain."></textarea>
+      <div class="hint">Be concrete about characters, setting, mood and camera. Dialogue is optional.</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="title">Project title</label>
+        <input id="title" placeholder="(derived from prompt)">
+      </div>
+      <div class="field">
+        <label for="method">Method</label>
+        <select id="method">
+          <option value="auto" selected>Auto (best available)</option>
+          <option value="2d">Rigged 2D animation</option>
+          <option value="3d">Stylized 3D animation (Blender)</option>
+          <option value="3d_cartoon">High-quality 3D cartoon (Blender)</option>
+          <option value="realistic">Realistic human scene (Blender or AI stills)</option>
+          <option value="realistic_3d">Realistic 3D humans (Blender)</option>
+          <option value="cinematic">Cinematic still-image story</option>
+          <option value="photoreal">Photoreal still-image story</option>
+          <option value="still_image">Still-image story</option>
+          <option value="educational">Educational explainer</option>
+          <option value="children">Children's story</option>
+          <option value="ai_image">Local AI background (if installed)</option>
+          <option value="ai_video">Local AI video (only if configured)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="resolution">Resolution</label>
+        <select id="resolution">
+          {% for r in resolutions %}<option value="{{ r }}" {{ 'selected' if r == '720p' else '' }}>{{ r }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="fps">Frame rate</label>
+        <select id="fps"><option>24</option><option>25</option><option>30</option></select>
+      </div>
+      <div class="field">
+        <label for="aspect">Aspect</label>
+        <select id="aspect"><option value="16:9" selected>16:9 landscape</option><option value="9:16">9:16 vertical</option></select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="language">Voice language</label>
+        <select id="language">
+          <option value="en">English</option><option value="es">Spanish</option><option value="fr">French</option>
+          <option value="de">German</option><option value="hi">Hindi</option><option value="pt">Portuguese</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="music">Background</label>
+        <select id="music"><option value="none" selected>None</option><option value="procedural">Procedural ambience</option></select>
+      </div>
+      <div class="field">
+        <label for="duration">Target duration</label>
+        <select id="duration">
+          <option value="">Auto (from dialogue)</option>
+          <option value="30">30 seconds</option>
+          <option value="60">1 minute</option>
+          <option value="300">5 minutes</option>
+          <option value="600">10 minutes</option>
+          <option value="900">15 minutes</option>
+          <option value="1200">20 minutes</option>
+          <option value="1500">25 minutes</option>
+          <option value="1800">30 minutes</option>
+          <option value="2400">40 minutes</option>
+          <option value="2700">45 minutes</option>
+          <option value="custom">Custom seconds…</option>
+        </select>
+        <input id="duration-custom" type="number" min="4" max="2700" step="1"
+               placeholder="custom seconds" style="display:none;margin-top:.35rem">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="dialogue-text">Dialogue override (optional)</label>
+      <textarea id="dialogue-text" placeholder="Character: [happy] You will not believe what happened today.&#10;Character 2: [curious] Tell me everything!"></textarea>
+      <div class="hint">Use the character ids/names shown in the plan preview. Leave empty to let the planner write a placeholder conversation.</div>
+    </div>
+
+    <div class="field row" style="gap:.55rem">
+      <input id="burn" type="checkbox" checked>
+      <label for="burn" style="margin:0;font-weight:500">Burn subtitles into the picture</label>
+    </div>
+
+    <div class="row">
+      <button id="create-submit" class="btn primary" type="submit">Create and render</button>
+      <a class="btn" href="/">Cancel</a>
+    </div>
+    <div id="form-status" aria-live="polite" style="margin-top:.8rem"></div>
+  </form>
+
+  <aside class="card" aria-live="polite">
+    <h2>Plan preview</h2>
+    <div id="plan-preview"><p class="muted">Describe your video to see a plan preview.</p></div>
+  </aside>
+</div>
+{% endblock %}

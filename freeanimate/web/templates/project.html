@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+{% set m = project.manifest %}
+<div class="spread">
+  <div>
+    <h1>{{ m.get('name', project.root.name) }}</h1>
+    <p class="lead">{{ m.get('prompt', '')[:240] }}</p>
+  </div>
+  <span class="badge {{ 'ok' if m.get('status') == 'exported' else 'warn' }}">{{ m.get('status') }}</span>
+</div>
+
+<div class="split">
+  <div>
+    <div class="card flush">
+      <video controls preload="metadata" poster="{{ media }}/thumbnails/thumbnail.jpg">
+        <source src="{{ media }}/renders/final.mp4" type="video/mp4">
+        Your browser cannot play this MP4. <a href="{{ media }}/renders/final.mp4">Download it</a>.
+      </video>
+    </div>
+    <div class="row" style="margin-top:.8rem">
+      <a class="btn primary" href="{{ media }}/renders/final.mp4" download>Download MP4</a>
+      <a class="btn" href="{{ media }}/subtitles/subtitles.srt" download>SRT</a>
+      <a class="btn" href="{{ media }}/subtitles/subtitles.vtt" download>VTT</a>
+      <a class="btn" href="/api/projects/{{ project.manifest['slug'] }}/export.zip" download>Export bundle (ZIP)</a>
+      <a class="btn" href="{{ media }}/reports/validation_report.json">Validation report</a>
+      <a class="btn" href="/new">New video</a>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h2>Dialogue and timing</h2>
+      {% if convo.lines %}
+        {% for line in convo.lines %}
+        <div class="dialogue-line">
+          <div class="spread">
+            <b>{{ line.speaker_name }}</b>
+            <span class="small muted">{{ '%.2f'|format(line.start) }}s → {{ '%.2f'|format(line.end) }}s · {{ line.emotion }} · {{ line.engine }}</span>
+          </div>
+          <div>{{ line.text }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <p class="muted">No conversation lines were recorded for this project type.</p>
+      {% endif %}
+    </div>
+
+    {% if scenes %}
+    <div class="card" id="scene-list" data-slug="{{ project.manifest['slug'] }}" style="margin-top:1rem">
+      <h2>Scenes</h2>
+      <p class="small muted">Segments are silent previews; the final MP4 carries the mixed voice track. Re-rendering one scene reuses the other segments, voices, subtitles and audio mix.</p>
+      {% for s in scenes %}
+      <div class="dialogue-line">
+        <div class="spread">
+          <b>Scene {{ s.index }}</b>
+          <span class="small muted">{{ s.size_mb }} MB</span>
+        </div>
+        <video controls muted preload="none" playsinline style="width:100%;max-width:520px;margin:.4rem 0">
+          <source src="{{ s.url }}" type="video/mp4">
+          <a href="{{ s.url }}">Open scene {{ s.index }}</a>
+        </video>
+        <div class="row">
+          <button class="btn" type="button" data-scene="{{ s.index }}">Re-render scene {{ s.index }}</button>
+        </div>
+      </div>
+      {% endfor %}
+      <div id="scene-status" aria-live="polite"></div>
+    </div>
+    {% endif %}
+
+    <div class="card" style="margin-top:1rem">
+      <h2>Render again with edited dialogue</h2>
+      <p class="small muted">This creates a new project version (the original is kept). Changes to voices are automatic; use the plan preview to see character names.</p>
+      <form id="rerender-form" data-slug="{{ project.root.name }}">
+        <div class="field">
+          <label for="dialogue-edit">Dialogue (<span class="mono">Name: [emotion] text</span>)</label>
+          <textarea id="dialogue-edit" style="min-height:180px">{% for line in convo.lines %}{{ line.speaker_name }}: [{{ line.emotion }}] {{ line.text }}
+{% endfor %}</textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="rr-resolution">Resolution</label>
+            <select id="rr-resolution"><option>480p</option><option selected>720p</option><option>1080p</option></select>
+          </div>
+          <div class="field">
+            <label for="rr-music">Background</label>
+            <select id="rr-music"><option value="none" selected>None</option><option value="procedural">Procedural ambience</option></select>
+          </div>
+        </div>
+        <div class="row">
+          <button id="rerender-submit" class="btn primary" type="submit">Render new version</button>
+        </div>
+        <div id="rerender-status" aria-live="polite" style="margin-top:.6rem"></div>
+      </form>
+    </div>
+  </div>
+
+  <aside>
+    <div class="card">
+      <h2>Production method</h2>
+      <p class="small"><b>Requested:</b> {{ plan.get('requested_method', '—') }}<br>
+      <b>Used:</b> {{ m.get('methods_used', {}).get('animation', '—') }}</p>
+      {% if plan.get('method_note') %}<p class="small muted">{{ plan.method_note }}</p>{% endif %}
+      <table>
+        <tbody>
+        {% for k, v in m.get('methods_used', {}).items() %}
+          <tr><th>{{ k }}</th><td class="small">{{ v }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if characters %}
+    <div class="card" style="margin-top:1rem">
+      <h2>Characters</h2>
+      <div class="grid cols-2">
+        {% for c in characters %}
+        <div class="char-card">
+          {% if c.portrait %}<img class="portrait" src="{{ c.portrait }}" alt="Portrait of {{ c.name }}">{% endif %}
+          <div>
+            <b>{{ c.name }}</b>
+            <div class="small muted">{{ c.species }}{% if c.clothing %} · {{ c.clothing }}{% endif %}</div>
+            {% if c.personality %}<div class="small">{{ c.personality }}</div>{% endif %}
+            <div class="pill-list" style="margin-top:.3rem">
+              {% for col in c.palette %}<span class="badge" style="background:{{ col }};color:#111">{{ col }}</span>{% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if report %}
+    <div class="card" style="margin-top:1rem">
+      <h2>Validation</h2>
+      <p><span class="badge {{ 'ok' if report.get('ok') else 'bad' }}">{{ 'passed' if report.get('ok') else 'problems' }}</span>
+         <span class="small muted">actual {{ '%.2f'|format(report.get('actual_duration', 0)) }}s</span></p>
+      {% if report.get('limitations') %}
+      <h3 class="small muted">Limitations</h3>
+      <ul class="list small">{% for l in report.get('limitations', []) %}<li>{{ l }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if m.get('warnings') %}
+      <h3 class="small muted">Notes</h3>
+      <ul class="list small">{% for w in m.get('warnings', []) %}<li>{{ w.message }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

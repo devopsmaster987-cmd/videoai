@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Make a real video, locally.</h1>
+  <p class="lead">Describe a scene. FreeAnimate plans the dialogue, designs persistent characters, renders genuine rigged 2D animation (or Blender 3D when installed), synthesizes local voices, lip-syncs mouths and produces an H.264 MP4 with subtitles. No account, no cloud, no fake output.</p>
+  <div class="row">
+    <a class="btn primary" href="/new">Create a video</a>
+    <a class="btn" href="/hardware">Check this machine</a>
+    <a class="btn" href="/models">Local models</a>
+  </div>
+</section>
+
+<div class="spread" style="margin-bottom:.8rem">
+  <h2 style="margin:0">Projects</h2>
+  <span class="muted small">{{ projects|length }} project(s)</span>
+</div>
+
+{% if projects %}
+<div class="grid cols-3">
+  {% for p in projects %}
+  <article class="card flush project-card">
+    <a href="{{ p.page }}" aria-label="Open {{ p.name }}">
+      {% if p.thumbnail_url %}
+      <img src="{{ p.thumbnail_url }}" alt="Thumbnail for {{ p.name }}" loading="lazy"
+           onerror="this.classList.add('thumb-ph');this.removeAttribute('src')">
+      {% else %}
+      <div class="thumb-ph">No thumbnail</div>
+      {% endif %}
+    </a>
+    <div class="card-body">
+      <div class="spread">
+        <h3 style="margin:0">{{ p.name }}</h3>
+        <span class="badge {{ 'ok' if p.status == 'exported' else 'warn' if p.status == 'failed' else '' }}">{{ p.status }}</span>
+      </div>
+      <p class="small muted" style="margin:.35rem 0 .6rem">{{ p.slug }}</p>
+      <div class="row">
+        <a class="btn" href="{{ p.page }}">Open</a>
+        {% if p.output_exists %}<a class="btn" href="{{ p.url }}">MP4</a>{% endif %}
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><p class="muted">No projects yet. <a href="/new">Create the first one.</a></p></div>
+{% endif %}
+
+{% if jobs %}
+<h2 style="margin-top:1.8rem">Recent jobs</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>Job</th><th>Project</th><th>Status</th><th>Stage</th><th>Progress</th><th>Created</th></tr></thead>
+    <tbody>
+    {% for j in jobs %}
+      <tr>
+        <td><a class="mono" href="/jobs/{{ j.id }}">{{ j.id }}</a></td>
+        <td>{{ j.project_id }}</td>
+        <td><span class="badge {{ 'ok' if j.status == 'done' else 'bad' if j.status == 'failed' else 'warn' if j.status == 'cancelled' else '' }}">{{ j.status }}</span></td>
+        <td>{{ j.stage or '' }}</td>
+        <td>{{ (j.progress * 100)|round|int }}%</td>
+        <td class="small muted">{{ j.created_at }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

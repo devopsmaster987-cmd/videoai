@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="job" data-job-id="{{ job.id }}">
+  <div class="spread">
+    <div>
+      <h1>Render job</h1>
+      <p class="lead mono">{{ job.id }} · {{ job.kind }}</p>
+    </div>
+    <span id="job-status" class="badge">{{ job.status }}</span>
+  </div>
+
+  <div class="card">
+    <div class="spread" style="margin-bottom:.4rem">
+      <strong id="stage">queued</strong>
+      <span class="muted small"><span id="pct">0%</span> · <span id="elapsed">0s</span></span>
+    </div>
+    <div class="progress-outer" role="progressbar" aria-label="Render progress" aria-valuemin="0" aria-valuemax="100">
+      <div id="bar" class="progress-bar"></div>
+    </div>
+    <p id="message" class="small muted" aria-live="polite" style="margin:.7rem 0 0"></p>
+    <div class="row" style="margin-top:.9rem">
+      <button id="cancel" class="btn danger" type="button">Cancel job</button>
+      <a class="btn" href="/">All projects</a>
+    </div>
+  </div>
+
+  <div id="job-result" aria-live="polite" style="margin-top:1rem"></div>
+</div>
+{% endblock %}

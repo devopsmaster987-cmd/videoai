@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Local models</h1>
+<p class="lead">Optional open-weight models for AI backgrounds or video. Nothing is downloaded automatically and no cloud service is used. When no model is installed the studio uses its procedural 2D/3D paths and reports that clearly.</p>
+
+<div class="grid cols-2">
+  <div class="card">
+    <h3>Image backend</h3>
+    <p><span class="badge {{ 'ok' if image_backend.available else 'warn' }}">{{ 'available' if image_backend.available else 'unavailable' }}</span>
+       {% if image_backend.backend %}<span class="badge">{{ image_backend.backend }}</span>{% endif %}</p>
+    <p class="small muted">{{ image_backend.detail }}</p>
+  </div>
+  <div class="card">
+    <h3>Video backend</h3>
+    <p><span class="badge {{ 'ok' if video_backend.available else 'warn' }}">{{ 'available' if video_backend.available else 'unavailable' }}</span>
+       {% if video_backend.backend %}<span class="badge">{{ video_backend.backend }}</span>{% endif %}</p>
+    <p class="small muted">{{ video_backend.detail }}</p>
+  </div>
+</div>
+
+<div id="plan-out" aria-live="polite"></div>
+
+<h2 style="margin-top:1.4rem">Registry</h2>
+<div class="grid cols-2">
+  {% for m in models %}
+  <article class="card">
+    <div class="spread">
+      <h3 style="margin:0">{{ m.family }}</h3>
+      <span class="badge">{{ m.task }}</span>
+    </div>
+    <p class="small mono">{{ m.repo_id or 'manual download' }}</p>
+    <ul class="list small">
+      <li>Approx. download: {{ m.approx_download_gb }} GB</li>
+      <li>Min RAM: {{ m.min_ram_gb }} GB · recommended VRAM: {{ m.recommended_vram_gb }} GB</li>
+      <li>CPU-capable: {{ 'yes (slow)' if m.cpu_capable else 'no' }}</li>
+      <li>Supports: {{ m.supports|join(', ') }}</li>
+    </ul>
+    <p class="small">{{ m.license_note }}</p>
+    <p class="small muted">{{ m.notes }}</p>
+    <button class="btn" type="button" data-plan-model="{{ m.id }}">Show download plan</button>
+  </article>
+  {% endfor %}
+</div>
+<p class="small muted" style="margin-top:1rem">To install, run the download command you approve yourself (see docs/REAL_CAPABILITIES.md). ComfyUI users can point <span class="mono">COMFYUI_URL</span> at their server.</p>
+{% endblock %}
